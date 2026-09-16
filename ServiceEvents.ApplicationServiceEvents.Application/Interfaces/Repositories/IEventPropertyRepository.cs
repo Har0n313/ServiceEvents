@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ServiceEvents.Domain.Entities;
 
-namespace ServiceEvents.Application.Interfaces.Repositories
+namespace ServiceEvents.Application.Interfaces.Repositories;
+
+public interface IEventPropertyRepository 
+    : IRepository<EventProperty>
 {
-    internal interface IEventPropertyRepository
-    {
-    }
+    Task<IReadOnlyCollection<EventProperty>> GetGlobalAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<EventProperty>> GetByEventIdAsync(
+        Guid eventId,
+        CancellationToken cancellationToken = default);
 }

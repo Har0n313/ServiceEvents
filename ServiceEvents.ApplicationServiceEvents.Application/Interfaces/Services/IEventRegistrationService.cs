@@ -1,12 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ServiceEvents.Application.DTOs.EventRegistrationDTO;
 
-namespace ServiceEvents.Application.Interfaces.Services
+namespace ServiceEvents.Application.Interfaces.Services;
+
+public interface IEventRegistrationService
 {
-    internal interface IEventRegistrationService
-    {
-    }
+    Task<EventRegistrationResponse> RegisterAsync(
+        Guid eventId,
+        Guid userId,
+        CancellationToken cancellationToken = default);
+
+    Task CancelAsync(
+        Guid eventId,
+        Guid userId,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<EventRegistrationResponse>> GetByEventIdAsync(
+        Guid eventId,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<EventRegistrationResponse>> GetByUserIdAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> IsRegisteredAsync(
+        Guid eventId,
+        Guid userId,
+        CancellationToken cancellationToken = default);
 }

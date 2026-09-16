@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ServiceEvents.Domain.Entities;
 
-namespace ServiceEvents.Application.Interfaces.Repositories
+namespace ServiceEvents.Application.Interfaces.Repositories;
+
+public interface IEventRepository : IRepository<Event>
 {
-    internal interface IEventRepository
-    {
-    }
+    Task<IReadOnlyCollection<Event>> GetAllAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<Event>> GetByOrganizerIdAsync(
+        Guid organizerId,
+        CancellationToken cancellationToken = default);
 }

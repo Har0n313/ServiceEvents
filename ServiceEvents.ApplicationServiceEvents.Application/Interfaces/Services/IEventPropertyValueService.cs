@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace ServiceEvents.Application.Interfaces.Services;
 
-namespace ServiceEvents.Application.Interfaces.Services
+internal interface IEventPropertyValueService
 {
-    internal interface IEventPropertyValueService
-    {
-    }
 }
