@@ -1,5 +1,5 @@
 <Solution>
-  <Project Path="ServiceEvents.ApplicationServiceEvents.Application/ServiceEvents.ApplicationServiceEvents.Application.csproj" />
+  <Project Path="ServiceEvents.ApplicationServiceEvents.Application/ServiceEvents.Application.csproj" />
   <Project Path="ServiceEvents.Domain/ServiceEvents.Domain.csproj" />
   <Project Path="ServiceEvents.Infrastructure/ServiceEvents.Infrastructure.csproj" />
   <Project Path="ServiceEvents.Web/ServiceEvents.Web.csproj" />
