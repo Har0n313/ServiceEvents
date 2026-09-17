@@ -27,6 +27,10 @@ public class EventPropertyValue : BaseEntity
         PropertyId = propertyId;
         Value = value;
     }
+    public void UpdateValue(string value)
+    {
+        Value = value;
+    }
 
     public void ChangeValue(string value)
     {

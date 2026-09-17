@@ -5,11 +5,11 @@ namespace ServiceEvents.Application.Interfaces.Services;
 
 public interface IUserService
 {
-    Task<UserResponse?> GetByIdAsync(
-        Guid id,
+    Task<IReadOnlyCollection<UserResponse>> GetAllAsync(
         CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyCollection<UserResponse>> GetAllAsync(
+    Task<UserResponse?> GetByIdAsync(
+        Guid id,
         CancellationToken cancellationToken = default);
 
     Task<IReadOnlyCollection<UserResponse>> GetByRoleAsync(
@@ -24,5 +24,9 @@ public interface IUserService
     Task ChangeRoleAsync(
         Guid id,
         UserRole role,
+        CancellationToken cancellationToken = default);
+
+    Task DeleteAsync(
+        Guid id,
         CancellationToken cancellationToken = default);
 }

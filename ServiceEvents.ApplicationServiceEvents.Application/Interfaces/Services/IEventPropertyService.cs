@@ -4,19 +4,14 @@ namespace ServiceEvents.Application.Interfaces.Services;
 
 public interface IEventPropertyService
 {
-    Task<IReadOnlyCollection<EventPropertyResponse>> GetGlobalPropertiesAsync(
+    Task<IReadOnlyCollection<EventPropertyResponse>> GetGlobalAsync(
         CancellationToken cancellationToken = default);
 
-    Task<EventPropertyResponse?> GetByIdAsync(
-        Guid id,
+    Task<IReadOnlyCollection<EventPropertyResponse>> GetByEventIdAsync(
+        Guid eventId,
         CancellationToken cancellationToken = default);
 
     Task<EventPropertyResponse> CreateAsync(
-        CreateEventPropertyRequest request,
-        CancellationToken cancellationToken = default);
-
-    Task<EventPropertyResponse> CreateForEventAsync(
-        Guid eventId,
         CreateEventPropertyRequest request,
         CancellationToken cancellationToken = default);
 
@@ -29,20 +24,14 @@ public interface IEventPropertyService
         Guid id,
         CancellationToken cancellationToken = default);
 
-    Task AddToEventAsync(
+    Task SetValueAsync(
         Guid eventId,
         Guid propertyId,
         string value,
         CancellationToken cancellationToken = default);
 
-    Task RemoveFromEventAsync(
+    Task RemoveValueAsync(
         Guid eventId,
         Guid propertyId,
-        CancellationToken cancellationToken = default);
-
-    Task UpdateEventPropertyValueAsync(
-        Guid eventId,
-        Guid propertyId,
-        string value,
         CancellationToken cancellationToken = default);
 }
