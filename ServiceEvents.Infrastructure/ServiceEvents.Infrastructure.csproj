@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ServiceEvents.ApplicationServiceEvents.Application\ServiceEvents.Application.csproj" />
     <ProjectReference Include="..\ServiceEvents.Domain\ServiceEvents.Domain.csproj" />
   </ItemGroup>
 
