@@ -11,4 +11,8 @@ public interface IUserRepository : IRepository<User>
     Task<IReadOnlyCollection<User>> GetByRoleAsync(
         UserRole role,
         CancellationToken cancellationToken = default);
+
+    Task<User?> GetByEmailAsync(
+        string email,
+        CancellationToken cancellationToken = default);
 }

@@ -7,6 +7,10 @@ public class User : BaseEntity
 {
     public string FullName { get; private set; } = string.Empty;
 
+    public string Email { get; private set; } = string.Empty;
+
+    public string? PasswordHash { get; private set; }
+
     public string Department { get; private set; } = string.Empty;
 
     public string Position { get; private set; } = string.Empty;
@@ -27,11 +31,13 @@ public class User : BaseEntity
         string fullName,
         string department,
         string position,
+        string email,
         UserRole role = UserRole.Employee)
     {
         FullName = fullName;
         Department = department;
         Position = position;
+        Email = email;
         Role = role;
     }
 
@@ -48,5 +54,10 @@ public class User : BaseEntity
     public void ChangeRole(UserRole role)
     {
         Role = role;
+    }
+
+    public void SetPasswordHash(string hash)
+    {
+        PasswordHash = hash;
     }
 }

@@ -25,4 +25,5 @@ public class ServiceEventsDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(
             Assembly.GetExecutingAssembly());
     }
+ 
 }

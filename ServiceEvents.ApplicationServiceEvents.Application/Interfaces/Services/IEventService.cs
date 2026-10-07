@@ -2,7 +2,7 @@
 
 namespace ServiceEvents.Application.Interfaces.Services;
 
-internal interface IEventService
+public interface IEventService
 {
     Task<IReadOnlyCollection<EventResponse>> GetAllAsync(
         CancellationToken cancellationToken = default);

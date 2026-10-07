@@ -29,4 +29,6 @@ public interface IUserService
     Task DeleteAsync(
         Guid id,
         CancellationToken cancellationToken = default);
+
+
 }

@@ -31,4 +31,13 @@ public class UserRepository
             .Where(x => x.Role == role)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<User?> GetByEmailAsync(
+        string email,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbSet
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
+    }
 }

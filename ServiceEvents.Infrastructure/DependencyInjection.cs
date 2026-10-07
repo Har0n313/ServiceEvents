@@ -2,10 +2,12 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceEvents.Application.Interfaces.Repositories;
+using ServiceEvents.Application.Interfaces.Services;
+using ServiceEvents.Application.Services;
 using ServiceEvents.Infrastructure.EntityFramework;
 using ServiceEvents.Infrastructure.Repositories;
 
-namespace ServiceEvents.Infrastructure.extension;
+namespace ServiceEvents.Infrastructure;
 
 public static class DependencyInjection
 {
@@ -25,6 +27,16 @@ public static class DependencyInjection
         services.AddScoped<IEventPropertyValueRepository, EventPropertyValueRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
 
+        return services;
+    }
+    public static IServiceCollection AddApplication(
+        this IServiceCollection services)
+    {
+        services.AddScoped<IEventService, EventService>();
+        services.AddScoped<IEventRegistrationService, EventRegistrationService>();
+        services.AddScoped<IEventPropertyService, EventPropertyService>();
+        services.AddScoped<IUserService, UserService>();
+        
         return services;
     }
 }
