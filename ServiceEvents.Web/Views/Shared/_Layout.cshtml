@@ -13,6 +13,7 @@
     @{
         var isAdmin = User.IsInRole("Admin");
         var isOrganizer = User.IsInRole("Organizer");
+        var isEmployee = User.IsInRole("Employee");
         var currentArea = ViewContext.RouteData.Values["area"]?.ToString();
         var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     }
@@ -26,8 +27,8 @@
         <nav class="navbar navbar-expand-lg navbar-light service-navbar">
             <div class="container service-shell">
                 <a class="navbar-brand service-brand"
-                   asp-area="@(isAdmin ? "Admin" : isOrganizer ? "Organizer" : "")"
-                   asp-controller="@(isAdmin ? "Admin" : isOrganizer ? "Events" : "Home")"
+                   asp-area="@(isAdmin ? "Admin" : isOrganizer ? "Organizer" : isEmployee ? "Employee" : "")"
+                   asp-controller="@(isAdmin ? "Admin" : isOrganizer || isEmployee ? "Events" : "Home")"
                    asp-action="Index">
                     <span class="service-brand-mark">SE</span>
                     <span class="service-brand-name">Service<span>Events</span></span>
@@ -72,6 +73,19 @@
                             </li>
                         </ul>
                     }
+                    else if (isEmployee)
+                    {
+                        <ul class="navbar-nav service-nav-links">
+                            <li class="nav-item">
+                                <a class="nav-link @(currentArea == "Employee" && currentController == "Events" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                                   asp-area="Employee" asp-controller="Events" asp-action="Index">Мероприятия</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentArea == "Employee" && ViewContext.RouteData.Values["action"]?.ToString() == "MyRegistrations" ? "active" : "")"
+                                   asp-area="Employee" asp-controller="Events" asp-action="MyRegistrations">Мои регистрации</a>
+                            </li>
+                        </ul>
+                    }
                     else if (User.Identity?.IsAuthenticated == true)
                     {
                         <ul class="navbar-nav service-nav-links">
@@ -94,6 +108,10 @@
                                 else if (isOrganizer)
                                 {
                                     <span class="badge rounded-pill service-role-badge">Организатор</span>
+                                }
+                                else if (isEmployee)
+                                {
+                                    <span class="badge rounded-pill service-role-badge">Сотрудник</span>
                                 }
                             </span>
                             <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">

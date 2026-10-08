@@ -22,7 +22,7 @@ namespace ServiceEvents.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult Login(string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
@@ -77,7 +77,7 @@ namespace ServiceEvents.Web.Controllers
             {
                 var r when r.ToString() == "Admin" => RedirectToAction("Index", "Admin", new { area = "Admin" }),
                 var r when r.ToString() == "Organizer" => RedirectToAction("Index", "Events", new { area = "Organizer" }),
-                _ => RedirectToAction("Index", "Home"),
+                _ => RedirectToAction("Index", "Events", new { area = "Employee" }),
             };
         }
 

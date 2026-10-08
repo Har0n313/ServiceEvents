@@ -19,7 +19,7 @@
 
     <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mt-4">
         <div>
-            <span class="badge text-bg-light border">@Model.Status</span>
+            <span class="badge text-bg-light border">@Model.Status.ToRussian()</span>
             <h1 class="mt-2">@Model.Title</h1>
             <p class="text-muted">
                 @DateTime.SpecifyKind(Model.StartDate, DateTimeKind.Utc).ToLocalTime().ToString("dd.MM.yyyy HH:mm")

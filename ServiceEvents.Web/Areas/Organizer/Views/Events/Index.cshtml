@@ -56,7 +56,7 @@
                             <td class="fw-semibold">@eventItem.Title</td>
                             <td>@DateTime.SpecifyKind(eventItem.StartDate, DateTimeKind.Utc).ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
                             <td>@(string.IsNullOrWhiteSpace(eventItem.Location) ? "—" : eventItem.Location)</td>
-                            <td>@eventItem.Status</td>
+                            <td>@eventItem.Status.ToRussian()</td>
                             <td class="text-end">
                                 <a asp-area="Organizer" asp-controller="Events" asp-action="Details" asp-route-id="@eventItem.EventId" class="btn btn-sm btn-outline-secondary">Управлять</a>
                             </td>

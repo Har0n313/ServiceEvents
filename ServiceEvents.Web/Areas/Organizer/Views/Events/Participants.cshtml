@@ -32,7 +32,7 @@
                         <tr>
                             <td class="fw-semibold">@participant.FullName</td>
                             <td>@DateTime.SpecifyKind(participant.RegisteredAt, DateTimeKind.Utc).ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
-                            <td>@participant.Status</td>
+                            <td>@participant.Status.ToRussian()</td>
                         </tr>
                     }
                 </tbody>

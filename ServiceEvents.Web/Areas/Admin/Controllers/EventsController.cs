@@ -107,7 +107,7 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             UpdateEventRequest request,
-            int startDateOffsetMinutes,
+            int? startDateOffsetMinutes,
             int? endDateOffsetMinutes,
             CancellationToken cancellationToken)
         {

@@ -29,7 +29,7 @@
                         <td>@registration.EventTitle</td>
                         <td>@registration.UserName</td>
                         <td>@registration.RegisteredAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
-                        <td>@registration.Status</td>
+                        <td>@registration.Status.ToRussian()</td>
                     </tr>
                 }
             </tbody>

@@ -11,7 +11,7 @@
         <input asp-for="EventId" type="hidden" />
         <input type="hidden" name="startDateOffsetMinutes" />
         <input type="hidden" name="endDateOffsetMinutes" />
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
 
         <div class="mb-3">
             <label asp-for="Title" class="form-label">Название</label>

@@ -36,7 +36,7 @@
                     <tr>
                         <td>@ev.Title</td>
                         <td>@ev.StartDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
-                        <td>@ev.Status</td>
+                        <td>@ev.Status.ToRussian()</td>
                         <td>
                             <a asp-area="Admin" asp-controller="Events" asp-action="Details" asp-route-id="@ev.EventId" class="btn btn-sm btn-link">Детали</a>
                             <a asp-area="Admin" asp-controller="Events" asp-action="Edit" asp-route-id="@ev.EventId" class="btn btn-sm btn-primary">Редактировать</a>

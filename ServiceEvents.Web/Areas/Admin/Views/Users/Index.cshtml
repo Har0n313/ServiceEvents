@@ -43,7 +43,7 @@
                         <td>@u.FullName</td>
                         <td>@u.Department</td>
                         <td>@u.Position</td>
-                        <td>@u.Role</td>
+                        <td>@u.Role.ToRussian()</td>
                         <td>
                             <a asp-area="Admin" asp-controller="Users" asp-action="Edit" asp-route-id="@u.UserId" class="btn btn-sm btn-primary me-1">Редактировать</a>
 
@@ -55,11 +55,11 @@
                                     {
                                         if (u.Role == role)
                                         {
-                                            <option value="@role" selected>@role</option>
+                                            <option value="@role" selected>@role.ToRussian()</option>
                                         }
                                         else
                                         {
-                                            <option value="@role">@role</option>
+                                            <option value="@role">@role.ToRussian()</option>
                                         }
                                     }
                                 </select>

@@ -55,7 +55,7 @@
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
                             <strong>@ev.Title</strong>
-                            <div class="text-muted small">@ev.StartDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm") · @ev.Status</div>
+                            <div class="text-muted small">@ev.StartDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm") · @ev.Status.ToRussian()</div>
                         </div>
                         <div>
                             <a class="btn btn-sm btn-outline-secondary me-1" asp-area="Admin" asp-controller="Events" asp-action="Details" asp-route-id="@ev.EventId">Просмотр</a>
@@ -81,7 +81,7 @@
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
                             <strong>@u.FullName</strong>
-                            <div class="text-muted small">@u.Department · @u.Position · @u.Role</div>
+                            <div class="text-muted small">@u.Department · @u.Position · @u.Role.ToRussian()</div>
                         </div>
                         <div>
                             <a class="btn btn-sm btn-outline-secondary me-1" asp-area="Admin" asp-controller="Users" asp-action="Edit" asp-route-id="@u.UserId">Редактировать</a>

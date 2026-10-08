@@ -1,0 +1,58 @@
+@model ServiceEvents.Web.Models.EmployeeEventViewModel
+@using ServiceEvents.Domain.Enums
+
+@{
+    ViewData["Title"] = Model.Event.Title;
+    var isRegistered = Model.RegistrationStatus == RegistrationStatus.Active;
+}
+
+<section class="container service-shell py-5">
+    <a asp-area="Employee" asp-controller="Events" asp-action="Index" class="text-decoration-none">← Все мероприятия</a>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success mt-3">@TempData["Message"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger mt-3">@TempData["Error"]</div>
+    }
+
+    <article class="employee-event-detail mt-4">
+        <span class="employee-event-tag">МЕРОПРИЯТИЕ</span>
+        <h1>@Model.Event.Title</h1>
+        <div class="employee-event-detail-meta">
+            <span>@DateTime.SpecifyKind(Model.Event.StartDate, DateTimeKind.Utc).ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+            @if (Model.Event.EndDate is { } endDate)
+            {
+                <span>До @DateTime.SpecifyKind(endDate, DateTimeKind.Utc).ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+            }
+            <span>@(string.IsNullOrWhiteSpace(Model.Event.Location) ? "Место уточняется" : Model.Event.Location)</span>
+            @if (Model.Event.MaxParticipants is { } capacity)
+            {
+                <span>До @capacity участников</span>
+            }
+        </div>
+        <div class="employee-event-detail-description">@Model.Event.Description</div>
+
+        @if (isRegistered)
+        {
+            <div class="d-flex flex-wrap align-items-center gap-3 mt-4">
+                <span class="employee-registered-badge">Вы записаны на это мероприятие</span>
+                <form asp-area="Employee" asp-controller="Events" asp-action="CancelRegistration" method="post" onsubmit="return confirm('Отменить регистрацию?');">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Event.EventId" />
+                    <button type="submit" class="btn btn-outline-danger">Отменить регистрацию</button>
+                </form>
+            </div>
+        }
+        else
+        {
+            <form asp-area="Employee" asp-controller="Events" asp-action="Register" method="post" class="mt-4">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Event.EventId" />
+                <button type="submit" class="btn btn-primary">Записаться на мероприятие</button>
+            </form>
+        }
+    </article>
+</section>

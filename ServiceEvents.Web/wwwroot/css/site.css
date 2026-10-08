@@ -829,6 +829,151 @@ a:focus-visible {
   font-weight: 650;
 }
 
+.employee-event-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.employee-event-card {
+  display: flex;
+  min-height: 285px;
+  flex-direction: column;
+  padding: 23px;
+  border: 1px solid var(--service-line);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(23, 48, 71, 0.035);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.employee-event-card:hover {
+  transform: translateY(-3px);
+  border-color: #c8e4f6;
+  box-shadow: 0 16px 34px rgba(23, 48, 71, 0.08);
+}
+
+.employee-event-card-top,
+.employee-event-meta,
+.employee-event-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.employee-event-tag {
+  color: var(--service-blue-dark);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.employee-event-date {
+  color: #718096;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.employee-event-card h2 {
+  margin: 19px 0 9px;
+  color: var(--service-ink);
+  font-size: 1.25rem;
+  font-weight: 750;
+  letter-spacing: -0.035em;
+}
+
+.employee-event-description {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-bottom: 17px;
+  color: var(--service-muted);
+  font-size: 0.86rem;
+  line-height: 1.65;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.employee-event-meta {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding: 12px 0;
+  border-top: 1px solid #edf1f5;
+  color: #66778a;
+  font-size: 0.77rem;
+}
+
+.employee-event-actions {
+  min-height: 38px;
+}
+
+.employee-event-actions form {
+  margin: 0;
+}
+
+.employee-event-details {
+  color: #38516b;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.employee-event-details:hover {
+  color: var(--service-blue-dark);
+}
+
+.employee-event-details span {
+  color: var(--service-blue);
+}
+
+.employee-registered-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.65rem;
+  border-radius: 20px;
+  background: #e8f7ef;
+  color: #188458;
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+
+.employee-event-detail {
+  max-width: 900px;
+  padding: clamp(24px, 5vw, 54px);
+  border: 1px solid var(--service-line);
+  border-radius: 12px;
+  background: linear-gradient(145deg, #fff, #f7fbfe);
+  box-shadow: 0 15px 40px rgba(23, 48, 71, 0.055);
+}
+
+.employee-event-detail h1 {
+  margin: 17px 0;
+  color: var(--service-ink);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+}
+
+.employee-event-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.2rem;
+  padding-bottom: 21px;
+  border-bottom: 1px solid var(--service-line);
+  color: #66778a;
+  font-size: 0.87rem;
+}
+
+.employee-event-detail-description {
+  padding-top: 23px;
+  color: #44566a;
+  font-size: 1rem;
+  line-height: 1.85;
+  white-space: pre-line;
+}
+
 @media (max-width: 991.98px) {
   .service-shell {
     width: min(100% - 36px, 720px);
@@ -904,6 +1049,10 @@ a:focus-visible {
   .service-login-page {
     grid-template-columns: 1fr 0.95fr;
     gap: 3rem;
+  }
+
+  .employee-event-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1019,6 +1168,15 @@ a:focus-visible {
 
   .service-login-card {
     padding: 26px;
+  }
+
+  .employee-event-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .employee-event-card {
+    min-height: 260px;
   }
 
   .service-footer .container {
