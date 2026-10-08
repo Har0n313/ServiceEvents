@@ -1,8 +1,122 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Мероприятия, которые объединяют";
+    var isAdmin = User.IsInRole("Admin");
+    var isOrganizer = User.IsInRole("Organizer");
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="service-hero">
+    <div class="container service-shell">
+        <div class="service-hero-content">
+            <div class="service-eyebrow"><span></span>ПЛАТФОРМА КОМАНДНЫХ СОБЫТИЙ</div>
+            <h1>Встречайтесь.<br /><span>Делитесь идеями.</span></h1>
+            <p class="service-hero-copy">
+                Создавайте события, собирайте команду и превращайте хорошие идеи в общие впечатления.
+                Всё необходимое для встреч — в одном месте.
+            </p>
+            <div class="service-hero-actions">
+                @if (isAdmin)
+                {
+                    <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="btn btn-primary btn-lg service-primary-button">Открыть панель <span aria-hidden="true">→</span></a>
+                    <a asp-area="Admin" asp-controller="Events" asp-action="Create" class="service-text-link">Создать мероприятие</a>
+                }
+                else if (isOrganizer)
+                {
+                    <a asp-area="Organizer" asp-controller="Events" asp-action="Index" class="btn btn-primary btn-lg service-primary-button">Мои мероприятия <span aria-hidden="true">→</span></a>
+                    <a asp-area="Organizer" asp-controller="Events" asp-action="Create" class="service-text-link">Создать мероприятие</a>
+                }
+                else if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a href="#service-benefits" class="btn btn-primary btn-lg service-primary-button">Открыть возможности <span aria-hidden="true">↓</span></a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg service-primary-button">Войти в систему <span aria-hidden="true">→</span></a>
+                    <a href="#service-benefits" class="service-text-link">Узнать больше</a>
+                }
+            </div>
+            <div class="service-hero-note">
+                <span class="service-note-check">✓</span>
+                <span>Организация событий — просто и понятно</span>
+            </div>
+        </div>
+
+        <div class="service-hero-art" aria-hidden="true">
+            <div class="service-art-orbit service-art-orbit-one"></div>
+            <div class="service-art-orbit service-art-orbit-two"></div>
+            <div class="service-art-card">
+                <div class="service-art-card-top">
+                    <span class="service-art-label">ВАШЕ СЛЕДУЮЩЕЕ СОБЫТИЕ</span>
+                    <span class="service-art-dots">•••</span>
+                </div>
+                <div class="service-art-calendar">
+                    <span class="service-calendar-month">ВМЕСТЕ — ЛУЧШЕ</span>
+                    <span class="service-calendar-day">01</span>
+                    <span class="service-calendar-caption">идея превращается<br />в событие</span>
+                </div>
+                <div class="service-art-people">
+                    <span class="service-person person-one">А</span>
+                    <span class="service-person person-two">М</span>
+                    <span class="service-person person-three">И</span>
+                    <span class="service-people-caption">Ваша команда уже здесь</span>
+                </div>
+            </div>
+            <div class="service-art-floating service-art-floating-top">
+                <span class="service-floating-icon">✦</span>
+                <span>Новые впечатления</span>
+            </div>
+            <div class="service-art-floating service-art-floating-bottom">
+                <span class="service-live-dot"></span>
+                Команда собирается
+            </div>
+            <div class="service-art-sparkle service-sparkle-one">✳</div>
+            <div class="service-art-sparkle service-sparkle-two">✦</div>
+        </div>
+    </div>
+    <div class="service-hero-bottom">
+        <div class="container service-shell">
+            <span>ИДЕИ</span><i></i><span>ЛЮДИ</span><i></i><span>СОБЫТИЯ</span>
+        </div>
+    </div>
+</section>
+
+<section class="service-benefits container service-shell" id="service-benefits">
+    <div class="service-section-heading">
+        <div>
+            <div class="service-eyebrow"><span></span>ВСЁ ДЛЯ ХОРОШИХ ВСТРЕЧ</div>
+            <h2>События начинаются с идеи</h2>
+        </div>
+        <p>Удобные инструменты помогают сосредоточиться на главном — людях и общении.</p>
+    </div>
+
+    <div class="service-benefit-grid">
+        <article class="service-benefit-card">
+            <div class="service-benefit-icon benefit-icon-blue">01</div>
+            <h3>Создавайте</h3>
+            <p>Оформите мероприятие, добавьте детали и поделитесь планом с командой.</p>
+            <span class="service-benefit-line"></span>
+        </article>
+        <article class="service-benefit-card">
+            <div class="service-benefit-icon benefit-icon-cyan">02</div>
+            <h3>Объединяйте</h3>
+            <p>Собирайте участников вокруг общих интересов, целей и новых идей.</p>
+            <span class="service-benefit-line"></span>
+        </article>
+        <article class="service-benefit-card">
+            <div class="service-benefit-icon benefit-icon-navy">03</div>
+            <h3>Вдохновляйте</h3>
+            <p>Создавайте моменты, которые укрепляют команду и остаются в памяти.</p>
+            <span class="service-benefit-line"></span>
+        </article>
+    </div>
+
+    @if (User.Identity?.IsAuthenticated != true)
+    {
+        <div class="service-bottom-cta">
+            <div>
+                <span class="service-eyebrow"><span></span>ВАША КОМАНДА ЖДЁТ</span>
+                <h2>Начните с первой встречи</h2>
+            </div>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-primary service-primary-button">Войти в систему <span aria-hidden="true">→</span></a>
+        </div>
+    }
+</section>

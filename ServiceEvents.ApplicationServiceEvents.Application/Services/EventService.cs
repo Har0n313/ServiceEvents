@@ -9,13 +9,16 @@ namespace ServiceEvents.Application.Services;
 public class EventService : IEventService
 {
     private readonly IEventRepository _eventRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public EventService(
         IEventRepository eventRepository,
+        IUserRepository userRepository,
         IUnitOfWork unitOfWork)
     {
         _eventRepository = eventRepository;
+        _userRepository = userRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -30,11 +33,24 @@ public class EventService : IEventService
             .ToList();
     }
 
+    public async Task<IReadOnlyCollection<EventResponse>> GetByOrganizerIdAsync(
+        Guid organizerId,
+        CancellationToken cancellationToken = default)
+    {
+        var events = await _eventRepository.GetByOrganizerIdAsync(
+            organizerId,
+            cancellationToken);
+
+        return events
+            .Select(eventEntity => eventEntity.ToResponse())
+            .ToList();
+    }
+
     public async Task<EventResponse?> GetByIdAsync(
         Guid id,
         CancellationToken cancellationToken = default)
     {
-        var eventEntity = await _eventRepository.GetByIdAsync(
+        var eventEntity = await _eventRepository.GetWithDepartmentByIdAsync(
             id,
             cancellationToken);
 
@@ -46,15 +62,23 @@ public class EventService : IEventService
         Guid organizerId,
         CancellationToken cancellationToken = default)
     {
+        var organizer = await _userRepository.GetWithDepartmentByIdAsync(organizerId, cancellationToken);
+        if (organizer is null)
+        {
+            throw new KeyNotFoundException($"Organizer with id '{organizerId}' was not found.");
+        }
+
         var eventEntity = new Event(
             request.Title,
             request.Description,
             request.StartDate,
             organizerId,
+            organizer.DepartmentId,
             request.Location,
             request.EndDate,
             request.MaxParticipants,
             request.ImagePath);
+        eventEntity.SetDepartment(organizer.Department);
 
         await _eventRepository.AddAsync(
             eventEntity,
@@ -166,7 +190,7 @@ public class EventService : IEventService
         Guid id,
         CancellationToken cancellationToken)
     {
-        var eventEntity = await _eventRepository.GetByIdAsync(
+        var eventEntity = await _eventRepository.GetWithDepartmentByIdAsync(
             id,
             cancellationToken);
 

@@ -1,6 +1,7 @@
 ﻿
 
 using ServiceEvents.Application.DTOs.EventPropertyDTO;
+using ServiceEvents.Application.DTOs.EventPropertyValueDTO;
 using ServiceEvents.Application.Interfaces.Repositories;
 using ServiceEvents.Application.Interfaces.Services;
 using ServiceEvents.Application.Mappings;
@@ -45,6 +46,23 @@ public class EventPropertyService : IEventPropertyService
 
         return properties
             .Select(property => property.ToResponse())
+            .ToList();
+    }
+
+    public async Task<IReadOnlyCollection<EventPropertyValueResponse>> GetValuesByEventIdAsync(
+        Guid eventId,
+        CancellationToken cancellationToken = default)
+    {
+        var values = await _propertyValueRepository.GetByEventIdAsync(
+            eventId,
+            cancellationToken);
+
+        return values
+            .Select(value => new EventPropertyValueResponse(
+                value.Id,
+                value.EventId,
+                value.PropertyId,
+                value.Value))
             .ToList();
     }
 

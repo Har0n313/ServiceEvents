@@ -1,0 +1,99 @@
+@model ServiceEvents.Application.DTOs.EventDTO.UpdateEventRequest
+@using ServiceEvents.Application.DTOs.EventPropertyDTO
+@using ServiceEvents.Domain.Enums
+
+@{
+    ViewData["Title"] = "Редактировать событие";
+    var availableProperties = ViewData["AvailableProperties"] as IReadOnlyCollection<EventPropertyResponse>
+        ?? Array.Empty<EventPropertyResponse>();
+    var propertyValues = ViewData["PropertyValues"] as Dictionary<Guid, string>
+        ?? new Dictionary<Guid, string>();
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <form asp-area="Admin" asp-controller="Events" asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="EventId" type="hidden" />
+        <input type="hidden" name="startDateOffsetMinutes" />
+        <input type="hidden" name="endDateOffsetMinutes" />
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">Название</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label">Описание</label>
+            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="StartDate" class="form-label">Начало</label>
+            <input asp-for="StartDate" type="datetime-local" class="form-control" />
+            <span asp-validation-for="StartDate" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="EndDate" class="form-label">Окончание</label>
+            <input asp-for="EndDate" type="datetime-local" class="form-control" />
+            <span asp-validation-for="EndDate" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label">Место проведения</label>
+            <input asp-for="Location" class="form-control" />
+            <span asp-validation-for="Location" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="MaxParticipants" class="form-label">Максимум участников</label>
+            <input asp-for="MaxParticipants" type="number" min="1" class="form-control" />
+            <span asp-validation-for="MaxParticipants" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ImagePath" class="form-label">Ссылка или путь к изображению</label>
+            <input asp-for="ImagePath" class="form-control" />
+            <span asp-validation-for="ImagePath" class="text-danger"></span>
+            <div class="form-text">Укажите путь сайта, например /images/event.jpg, или ссылку HTTPS.</div>
+        </div>
+        @if (availableProperties.Count > 0)
+        {
+            <fieldset class="mb-4">
+                <legend class="h5">Характеристики</legend>
+                @foreach (var property in availableProperties)
+                {
+                    propertyValues.TryGetValue(property.PropertyId, out var propertyValue);
+                    <div class="mb-3">
+                        <label class="form-label" for="property-@property.PropertyId">@property.Name</label>
+                        @if (property.DataType == PropertyDataType.Boolean)
+                        {
+                            <select class="form-select" id="property-@property.PropertyId" name="propertyValues[@property.PropertyId]">
+                                <option value="">Не выбрано</option>
+                                <option value="Да" selected="@(propertyValue == "Да")">Да</option>
+                                <option value="Нет" selected="@(propertyValue == "Нет")">Нет</option>
+                            </select>
+                        }
+                        else
+                        {
+                            <input class="form-control" id="property-@property.PropertyId" name="propertyValues[@property.PropertyId]"
+                                   value="@propertyValue" type="@(property.DataType == PropertyDataType.Integer ? "number" : "text")" />
+                        }
+                    </div>
+                }
+            </fieldset>
+        }
+
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a asp-area="Admin" asp-controller="Events" asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+    </form>
+</div>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function () {
+        const startDate = this.querySelector('[name="StartDate"]').value;
+        const endDate = this.querySelector('[name="EndDate"]').value;
+        this.querySelector('[name="startDateOffsetMinutes"]').value =
+            startDate ? new Date(startDate).getTimezoneOffset() : 0;
+        this.querySelector('[name="endDateOffsetMinutes"]').value =
+            endDate ? new Date(endDate).getTimezoneOffset() : 0;
+    });
+</script>

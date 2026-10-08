@@ -24,4 +24,14 @@ public class EventPropertyValueRepository
                      x.PropertyId == propertyId,
                 cancellationToken);
     }
+
+    public async Task<IReadOnlyCollection<EventPropertyValue>> GetByEventIdAsync(
+        Guid eventId,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbSet
+            .AsNoTracking()
+            .Where(value => value.EventId == eventId)
+            .ToListAsync(cancellationToken);
+    }
 }

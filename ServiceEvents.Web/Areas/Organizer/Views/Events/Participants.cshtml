@@ -1,0 +1,42 @@
+@model ServiceEvents.Web.Models.OrganizerParticipantsViewModel
+
+@{
+    ViewData["Title"] = "Участники мероприятия";
+}
+
+<div class="container mt-4">
+    <a asp-area="Organizer" asp-controller="Events" asp-action="Details" asp-route-id="@Model.Event.EventId" class="text-decoration-none">← К мероприятию</a>
+    <div class="mt-3 mb-4">
+        <h1>Участники</h1>
+        <p class="text-muted mb-0">@Model.Event.Title</p>
+    </div>
+
+    @if (Model.Participants.Count == 0)
+    {
+        <div class="alert alert-secondary">На мероприятие пока никто не зарегистрировался.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Участник</th>
+                        <th>Дата регистрации</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var participant in Model.Participants)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@participant.FullName</td>
+                            <td>@DateTime.SpecifyKind(participant.RegisteredAt, DateTimeKind.Utc).ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>@participant.Status.ToRussian()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

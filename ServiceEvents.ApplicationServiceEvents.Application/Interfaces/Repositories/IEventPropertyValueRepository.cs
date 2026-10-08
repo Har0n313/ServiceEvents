@@ -9,4 +9,8 @@ public interface IEventPropertyValueRepository
         Guid eventId,
         Guid propertyId,
         CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<EventPropertyValue>> GetByEventIdAsync(
+        Guid eventId,
+        CancellationToken cancellationToken = default);
 }

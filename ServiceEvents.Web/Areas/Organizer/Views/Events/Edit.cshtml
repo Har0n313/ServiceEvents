@@ -1,0 +1,108 @@
+@model ServiceEvents.Application.DTOs.EventDTO.UpdateEventRequest
+@using ServiceEvents.Application.DTOs.EventPropertyDTO
+@using ServiceEvents.Domain.Enums
+
+@{
+    ViewData["Title"] = "Редактировать мероприятие";
+    var availableProperties = ViewData["AvailableProperties"] as IReadOnlyCollection<EventPropertyResponse>
+        ?? Array.Empty<EventPropertyResponse>();
+    var propertyValues = ViewData["PropertyValues"] as Dictionary<Guid, string>
+        ?? new Dictionary<Guid, string>();
+}
+
+<div class="container mt-4">
+    <div class="mb-4">
+        <a asp-area="Organizer" asp-controller="Events" asp-action="Details" asp-route-id="@Model.EventId" class="text-decoration-none">← К мероприятию</a>
+        <h1 class="mt-3">@ViewData["Title"]</h1>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <form asp-area="Organizer" asp-controller="Events" asp-action="Edit" method="post" class="event-edit-form">
+                @Html.AntiForgeryToken()
+                <input asp-for="EventId" type="hidden" />
+                <input type="hidden" name="startDateOffsetMinutes" />
+                <input type="hidden" name="endDateOffsetMinutes" />
+                <div asp-validation-summary="All" class="alert alert-danger mb-3"></div>
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label">Название</label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Описание</label>
+                    <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="StartDate" class="form-label">Дата и время начала</label>
+                        <input asp-for="StartDate" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="EndDate" class="form-label">Дата и время окончания</label>
+                        <input asp-for="EndDate" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="EndDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Location" class="form-label">Место проведения</label>
+                        <input asp-for="Location" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="MaxParticipants" class="form-label">Максимум участников</label>
+                        <input asp-for="MaxParticipants" type="number" min="1" class="form-control" />
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label asp-for="ImagePath" class="form-label">Ссылка или путь к изображению</label>
+                    <input asp-for="ImagePath" class="form-control" />
+                    <span asp-validation-for="ImagePath" class="text-danger"></span>
+                    <div class="form-text">Укажите путь сайта, например /images/event.jpg, или ссылку HTTPS.</div>
+                </div>
+                @if (availableProperties.Count > 0)
+                {
+                    <fieldset class="mb-4">
+                        <legend class="h5">Характеристики</legend>
+                        @foreach (var property in availableProperties)
+                        {
+                            propertyValues.TryGetValue(property.PropertyId, out var propertyValue);
+                            <div class="mb-3">
+                                <label class="form-label" for="property-@property.PropertyId">@property.Name</label>
+                                @if (property.DataType == PropertyDataType.Boolean)
+                                {
+                                    <select class="form-select" id="property-@property.PropertyId" name="propertyValues[@property.PropertyId]">
+                                        <option value="">Не выбрано</option>
+                                        <option value="Да" selected="@(propertyValue == "Да")">Да</option>
+                                        <option value="Нет" selected="@(propertyValue == "Нет")">Нет</option>
+                                    </select>
+                                }
+                                else
+                                {
+                                    <input class="form-control" id="property-@property.PropertyId" name="propertyValues[@property.PropertyId]"
+                                           value="@propertyValue" type="@(property.DataType == PropertyDataType.Integer ? "number" : "text")" />
+                                }
+                            </div>
+                        }
+                    </fieldset>
+                }
+
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <a asp-area="Organizer" asp-controller="Events" asp-action="Details" asp-route-id="@Model.EventId" class="btn btn-outline-secondary">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelector('.event-edit-form').addEventListener('submit', function () {
+        const startDate = this.querySelector('[name="StartDate"]').value;
+        const endDate = this.querySelector('[name="EndDate"]').value;
+        this.querySelector('[name="startDateOffsetMinutes"]').value =
+            startDate ? new Date(startDate).getTimezoneOffset() : '';
+        this.querySelector('[name="endDateOffsetMinutes"]').value =
+            endDate ? new Date(endDate).getTimezoneOffset() : '';
+    });
+</script>

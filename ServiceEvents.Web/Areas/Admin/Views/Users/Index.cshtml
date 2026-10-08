@@ -1,0 +1,81 @@
+@model IReadOnlyCollection<ServiceEvents.Application.DTOs.UserDTO.UserResponse>
+
+@{
+    ViewData["Title"] = "Пользователи (админ)";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+}
+
+<div class="container mt-4">
+    <h1>Пользователи</h1>
+    <a asp-area="Admin" asp-controller="Users" asp-action="Create" class="btn btn-primary mb-3">Создать пользователя</a>
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="alert alert-secondary">Нет пользователей</div>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Департамент</th>
+                    <th>Должность</th>
+                    <th>Роль</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr>
+                        <td>@u.FullName</td>
+                        <td>@u.Department</td>
+                        <td>@u.Position</td>
+                        <td>@u.Role.ToRussian()</td>
+                        <td>
+                            <a asp-area="Admin" asp-controller="Users" asp-action="Edit" asp-route-id="@u.UserId" class="btn btn-sm btn-primary me-1">Редактировать</a>
+
+                            <form asp-area="Admin" asp-controller="Users" asp-action="ChangeRole" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@u.UserId" />
+                                <select name="role" class="form-select form-select-sm d-inline-block w-auto" aria-label="Роль пользователя">
+                                    @foreach (ServiceEvents.Domain.Enums.UserRole role in Enum.GetValues(typeof(ServiceEvents.Domain.Enums.UserRole)))
+                                    {
+                                        if (u.Role == role)
+                                        {
+                                            <option value="@role" selected>@role.ToRussian()</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@role">@role.ToRussian()</option>
+                                        }
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Изменить роль</button>
+                            </form>
+
+                            <form asp-area="Admin" asp-controller="Users" asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Удалить пользователя?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@u.UserId" />
+                                <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

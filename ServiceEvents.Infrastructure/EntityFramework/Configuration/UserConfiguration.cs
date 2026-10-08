@@ -23,10 +23,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.PasswordHash)
             .HasMaxLength(500);
 
-        builder.Property(x => x.Department)
-            .IsRequired()
-            .HasMaxLength(200);
-
         builder.Property(x => x.Position)
             .IsRequired()
             .HasMaxLength(200);
@@ -34,6 +30,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.Role)
             .IsRequired()
             .HasConversion<int>();
+
+        builder.HasOne(x => x.Department)
+            .WithMany(x => x.Users)
+            .HasForeignKey(x => x.DepartmentId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(x => x.OrganizedEvents)
             .WithOne(x => x.Organizer)

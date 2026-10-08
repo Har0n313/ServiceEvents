@@ -1,0 +1,58 @@
+@model ServiceEvents.Web.Models.AdminCreateUserViewModel
+
+@{
+    ViewData["Title"] = "Создать пользователя";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <form asp-area="Admin" asp-controller="Users" asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Email</label>
+            <input asp-for="Email" type="email" class="form-control" autocomplete="username" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label">Пароль</label>
+            <input asp-for="Password" class="form-control" autocomplete="new-password" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="FullName" class="form-label">ФИО</label>
+            <input asp-for="FullName" class="form-control" />
+            <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="DepartmentId" class="form-label">Департамент</label>
+            <select asp-for="DepartmentId" class="form-select">
+                <option value="">Выберите департамент</option>
+                @foreach (var department in (IReadOnlyCollection<ServiceEvents.Application.DTOs.DepartmentDTO.DepartmentResponse>)ViewData["Departments"]!)
+                {
+                    <option value="@department.DepartmentId">@department.Name</option>
+                }
+            </select>
+            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Position" class="form-label">Должность</label>
+            <input asp-for="Position" class="form-control" />
+            <span asp-validation-for="Position" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Role" class="form-label">Роль</label>
+            <select asp-for="Role" class="form-select">
+                @foreach (ServiceEvents.Domain.Enums.UserRole role in Enum.GetValues(typeof(ServiceEvents.Domain.Enums.UserRole)))
+                {
+                    <option value="@role">@role.ToRussian()</option>
+                }
+            </select>
+            <span asp-validation-for="Role" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Создать</button>
+        <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+    </form>
+</div>

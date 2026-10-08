@@ -19,6 +19,10 @@ public class Event : BaseEntity
 
     public string? ImagePath { get; private set; }
 
+    public Guid DepartmentId { get; private set; }
+
+    public Department Department { get; private set; } = null!;
+
     public EventStatus Status { get; private set; } = EventStatus.Draft;
 
     public Guid OrganizerId { get; private set; }
@@ -44,6 +48,7 @@ public class Event : BaseEntity
         string description,
         DateTime startDate,
         Guid organizerId,
+        Guid departmentId,
         string? location = null,
         DateTime? endDate = null,
         int? maxParticipants = null,
@@ -57,6 +62,7 @@ public class Event : BaseEntity
         EndDate = endDate;
         MaxParticipants = maxParticipants;
         ImagePath = imagePath;
+        DepartmentId = departmentId;
     }
 
     public void UpdateInformation(
@@ -76,6 +82,12 @@ public class Event : BaseEntity
         MaxParticipants = maxParticipants;
         ImagePath = imagePath;
         UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void SetDepartment(Department department)
+    {
+        Department = department;
+        DepartmentId = department.Id;
     }
 
     public void Publish()

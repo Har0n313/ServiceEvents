@@ -1,0 +1,41 @@
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostEnvironment
+
+@{
+    ViewData["Title"] = "Вход";
+}
+
+<section class="service-login-page">
+    <div class="service-login-aside">
+        <span class="service-eyebrow"><span></span>SERVICE EVENTS</span>
+        <h1>Хорошие события<br />начинаются <span>здесь.</span></h1>
+        <p>Войдите, чтобы управлять мероприятиями и быть ближе к своей команде.</p>
+        <div class="service-login-decoration" aria-hidden="true">SE</div>
+    </div>
+    <div class="service-login-card">
+        <span class="service-login-kicker">С РАДОСТЬЮ ВИДИМ ВАС</span>
+        <h2>@ViewData["Title"]</h2>
+        <p class="text-muted mb-4">Введите данные своей учётной записи.</p>
+        <form method="post" asp-controller="Account" asp-action="Login">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" autocomplete="username" required />
+            </div>
+            <div class="mb-4">
+                <label for="password" class="form-label">Пароль</label>
+                <input type="password" class="form-control" id="password" name="password" autocomplete="current-password" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100 service-primary-button">Войти <span aria-hidden="true">→</span></button>
+        </form>
+        @if (HostEnvironment.IsDevelopment())
+        {
+            <div class="alert alert-light border mt-4 mb-0">
+                <strong>Тестовые учётные записи</strong>
+                <div class="small mt-2">Администратор: admin@gmail.com / Admin123!</div>
+                <div class="small">Организатор: organizer@localhost / Organizer123!</div>
+                <div class="small">Сотрудник: employee@localhost / Employee123!</div>
+            </div>
+        }
+    </div>
+</section>

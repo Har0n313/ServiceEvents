@@ -22,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<IEventRepository, EventRepository>();
+        services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IEventRegistrationRepository, EventRegistrationRepository>();
         services.AddScoped<IEventPropertyRepository, EventPropertyRepository>();
         services.AddScoped<IEventPropertyValueRepository, EventPropertyValueRepository>();
@@ -36,6 +37,7 @@ public static class DependencyInjection
         services.AddScoped<IEventRegistrationService, EventRegistrationService>();
         services.AddScoped<IEventPropertyService, EventPropertyService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IDepartmentService, DepartmentService>();
         
         return services;
     }

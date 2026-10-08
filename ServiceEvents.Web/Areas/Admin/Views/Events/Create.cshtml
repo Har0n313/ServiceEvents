@@ -1,0 +1,95 @@
+@model ServiceEvents.Web.Models.CreateEventViewModel
+
+@{
+    ViewData["Title"] = "Создать мероприятие";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <form asp-area="Admin" asp-controller="Events" asp-action="Create" method="post" class="event-create-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="startDateOffsetMinutes" />
+        <input type="hidden" name="endDateOffsetMinutes" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">Название</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label">Описание</label>
+            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="StartDate" class="form-label">Начало</label>
+            <div class="event-date-field">
+                <input asp-for="StartDate" type="text" class="form-control event-date-input" placeholder="__.__.____ __:__" maxlength="16" inputmode="numeric" autocomplete="off" />
+                <div class="event-calendar-control">
+                    <button type="button" class="btn btn-outline-secondary event-calendar-button">Календарь</button>
+                    <input type="datetime-local" class="event-date-picker" aria-label="Выбрать дату и время начала" tabindex="-1" />
+                </div>
+            </div>
+            <span asp-validation-for="StartDate" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="EndDate" class="form-label">Окончание</label>
+            <div class="event-date-field">
+                <input asp-for="EndDate" type="text" class="form-control event-date-input" placeholder="__.__.____ __:__" maxlength="16" inputmode="numeric" autocomplete="off" />
+                <div class="event-calendar-control">
+                    <button type="button" class="btn btn-outline-secondary event-calendar-button">Календарь</button>
+                    <input type="datetime-local" class="event-date-picker" aria-label="Выбрать дату и время окончания" tabindex="-1" />
+                </div>
+            </div>
+            <span asp-validation-for="EndDate" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label">Место проведения</label>
+            <input asp-for="Location" class="form-control" />
+            <span asp-validation-for="Location" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="MaxParticipants" class="form-label">Максимум участников</label>
+            <input asp-for="MaxParticipants" type="number" min="1" class="form-control" />
+            <span asp-validation-for="MaxParticipants" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ImagePath" class="form-label">Ссылка или путь к изображению</label>
+            <input asp-for="ImagePath" class="form-control" />
+            <span asp-validation-for="ImagePath" class="text-danger"></span>
+            <div class="form-text">Укажите путь сайта, например /images/event.jpg, или ссылку HTTPS.</div>
+        </div>
+
+        @if (Model.AvailableProperties.Count > 0)
+        {
+            <h2 class="h5 mb-3">Характеристики</h2>
+            @foreach (var property in Model.AvailableProperties)
+            {
+                <div class="mb-3">
+                    <label class="form-label" for="property-@property.PropertyId">@property.Name</label>
+                    @if (property.DataType == ServiceEvents.Domain.Enums.PropertyDataType.Boolean)
+                    {
+                        <select id="property-@property.PropertyId" name="PropertyValues[@property.PropertyId]" class="form-select">
+                            <option value="">Не указано</option>
+                            <option value="Да" selected="@(Model.PropertyValues.GetValueOrDefault(property.PropertyId) == "Да")">Да</option>
+                            <option value="Нет" selected="@(Model.PropertyValues.GetValueOrDefault(property.PropertyId) == "Нет")">Нет</option>
+                        </select>
+                    }
+                    else
+                    {
+                        <input id="property-@property.PropertyId"
+                               name="PropertyValues[@property.PropertyId]"
+                               value="@Model.PropertyValues.GetValueOrDefault(property.PropertyId)"
+                               type="@(property.DataType == ServiceEvents.Domain.Enums.PropertyDataType.Integer ? "number" : "text")"
+                               class="form-control" />
+                    }
+                    <span class="text-danger">@Html.ValidationMessage($"PropertyValues[{property.PropertyId}]")</span>
+                </div>
+            }
+        }
+
+        <button type="submit" class="btn btn-primary">Создать</button>
+        <a asp-area="Admin" asp-controller="Events" asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+    </form>
+</div>

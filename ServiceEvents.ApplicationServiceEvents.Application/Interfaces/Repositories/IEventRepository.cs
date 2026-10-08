@@ -10,4 +10,8 @@ public interface IEventRepository : IRepository<Event>
     Task<IReadOnlyCollection<Event>> GetByOrganizerIdAsync(
         Guid organizerId,
         CancellationToken cancellationToken = default);
+
+    Task<Event?> GetWithDepartmentByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
 }

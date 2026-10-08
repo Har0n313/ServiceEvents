@@ -11,6 +11,8 @@ namespace ServiceEvents.Application.DTOs.EventDTO
     string? Location,
     int? MaxParticipants,
     string? ImagePath,
+    Guid DepartmentId,
+    string Department,
     EventStatus Status,
     Guid OrganizerId,
     DateTime CreatedAt,
