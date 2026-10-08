@@ -8,9 +8,10 @@
 
 .admin-dashboard h1 {
   margin: 0 0 18px;
-  color: #0f172a;
+  color: #152335;
   font-size: 34px;
   font-weight: 700;
+  letter-spacing: -0.045em;
 }
 
 .admin-cards {
@@ -22,22 +23,29 @@
 .admin-card {
   flex: 1 1 0;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
+  border: 1px solid #e5ebf2;
+  border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 8px 20px rgba(15,23,42,0.04);
+  box-shadow: 0 8px 22px rgba(23,48,71,0.035);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.admin-card:hover {
+  transform: translateY(-2px);
+  border-color: #c8e4f6;
+  box-shadow: 0 14px 28px rgba(23,48,71,0.07);
 }
 
 .admin-card .card-title {
   margin: 0;
-  color: #334155;
+  color: #64758a;
   font-size: 14px;
   font-weight: 600;
 }
 
 .admin-card .card-value {
   margin-top: 10px;
-  color: #0f172a;
+  color: #152335;
   font-size: 28px;
   font-weight: 700;
 }
@@ -48,13 +56,35 @@
 
 .admin-list .list-group-item {
   background: #ffffff;
-  border: 1px solid #e8eef6;
-  border-radius: 10px;
+  border: 1px solid #e5ebf2;
+  border-radius: 8px;
   margin-bottom: 10px;
+  padding: 16px 18px;
 }
 
 .admin-list .list-group-item .small {
   color: #64748b;
+}
+
+.admin-dashboard .table,
+.container .table {
+  --bs-table-border-color: #e8eef4;
+  color: #34465a;
+}
+
+.admin-dashboard .table thead th,
+.container .table thead th {
+  color: #738398;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.admin-dashboard .alert,
+.container .alert {
+  border: 0;
+  border-radius: 8px;
 }
 
 @media (max-width: 900px) {

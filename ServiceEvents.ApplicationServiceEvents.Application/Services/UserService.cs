@@ -9,13 +9,16 @@ namespace ServiceEvents.Application.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IEventRepository _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public UserService(
         IUserRepository userRepository,
+        IEventRepository eventRepository,
         IUnitOfWork unitOfWork)
     {
         _userRepository = userRepository;
+        _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -52,6 +55,30 @@ public class UserService : IUserService
         return users
             .Select(user => user.ToResponse())
             .ToList();
+    }
+
+    public async Task<UserResponse> CreateAsync(
+        CreateUserRequest request,
+        string passwordHash,
+        CancellationToken cancellationToken = default)
+    {
+        if (await _userRepository.GetByEmailAsync(request.Email, cancellationToken) is not null)
+        {
+            throw new InvalidOperationException("Пользователь с таким email уже существует.");
+        }
+
+        var user = new Domain.Entities.User(
+            request.FullName,
+            request.Department,
+            request.Position,
+            request.Email,
+            request.Role);
+        user.SetPasswordHash(passwordHash);
+
+        await _userRepository.AddAsync(user, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return user.ToResponse();
     }
 
     public async Task UpdateAsync(
@@ -102,6 +129,17 @@ public class UserService : IUserService
         var user = await GetUserAsync(
             id,
             cancellationToken);
+
+        var organizedEvents = await _eventRepository.GetByOrganizerIdAsync(
+            id,
+            cancellationToken);
+        if (organizedEvents.Count > 0)
+        {
+            throw new InvalidOperationException(
+                $"Нельзя удалить пользователя «{user.FullName}»: он назначен организатором " +
+                $"{organizedEvents.Count} мероприятий ({string.Join(", ", organizedEvents.Select(ev => ev.Title))}). " +
+                "Сначала переназначьте или удалите эти мероприятия.");
+        }
 
         await _userRepository.DeleteAsync(
             user,

@@ -1,0 +1,33 @@
+@model ServiceEvents.Application.DTOs.UserDTO.UpdateUserRequest
+
+@{
+    ViewData["Title"] = "Редактировать пользователя";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <form asp-area="Admin" asp-controller="Users" asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="UserId" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="FullName" class="form-label">ФИО</label>
+            <input asp-for="FullName" class="form-control" />
+            <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Department" class="form-label">Департамент</label>
+            <input asp-for="Department" class="form-control" />
+            <span asp-validation-for="Department" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Position" class="form-label">Должность</label>
+            <input asp-for="Position" class="form-control" />
+            <span asp-validation-for="Position" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+    </form>
+</div>

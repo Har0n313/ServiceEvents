@@ -10,24 +10,34 @@
 
 <div class="admin-dashboard">
     <h1>@ViewData["Title"]</h1>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
 
     <div class="admin-cards">
         <div class="admin-card">
             <div class="card-title">События</div>
             <div class="card-value">@Model.EventsCount</div>
             <a asp-area="Admin" asp-controller="Events" asp-action="Index" class="btn btn-sm btn-outline-secondary mt-2">Все события</a>
+            <a asp-area="Admin" asp-controller="Events" asp-action="Create" class="btn btn-sm btn-primary mt-2">Создать мероприятие</a>
         </div>
 
         <div class="admin-card">
             <div class="card-title">Пользователи</div>
             <div class="card-value">@Model.UsersCount</div>
             <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="btn btn-sm btn-outline-secondary mt-2">Все пользователи</a>
+            <a asp-area="Admin" asp-controller="Users" asp-action="Create" class="btn btn-sm btn-primary mt-2">Создать пользователя</a>
         </div>
 
         <div class="admin-card">
             <div class="card-title">Регистрации</div>
             <div class="card-value">@Model.RegistrationsCount</div>
-            <a asp-area="Admin" asp-controller="Events" asp-action="Index" class="btn btn-sm btn-outline-secondary mt-2">Просмотреть</a>
+            <a asp-area="Admin" asp-controller="Registrations" asp-action="Index" class="btn btn-sm btn-outline-secondary mt-2">Просмотреть</a>
         </div>
     </div>
 
@@ -78,6 +88,7 @@
                             <form asp-area="Admin" asp-controller="Users" asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Удалить пользователя?');">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@u.UserId" />
+                                <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Удалить</button>
                             </form>
                         </div>

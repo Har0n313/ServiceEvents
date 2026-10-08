@@ -76,7 +76,7 @@ namespace ServiceEvents.Web.Controllers
             return user.Role switch
             {
                 var r when r.ToString() == "Admin" => RedirectToAction("Index", "Admin", new { area = "Admin" }),
-                var r when r.ToString() == "Organizer" => RedirectToAction("Index", "Events"),
+                var r when r.ToString() == "Organizer" => RedirectToAction("Index", "Events", new { area = "Organizer" }),
                 _ => RedirectToAction("Index", "Home"),
             };
         }

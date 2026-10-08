@@ -1,45 +1,124 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ServiceEvents.Web</title>
+    <title>@ViewData["Title"] - ServiceEvents</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ServiceEvents.Web.styles.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
 </head>
 <body>
+    @{
+        var isAdmin = User.IsInRole("Admin");
+        var isOrganizer = User.IsInRole("Organizer");
+        var currentArea = ViewContext.RouteData.Values["area"]?.ToString();
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    }
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ServiceEvents.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <div class="service-utility-bar">
+            <div class="container service-shell d-flex justify-content-between align-items-center">
+                <span>Мероприятия и встречи вашей команды</span>
+                <span class="service-utility-right">Пространство для общения, идей и новых возможностей</span>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg navbar-light service-navbar">
+            <div class="container service-shell">
+                <a class="navbar-brand service-brand"
+                   asp-area="@(isAdmin ? "Admin" : isOrganizer ? "Organizer" : "")"
+                   asp-controller="@(isAdmin ? "Admin" : isOrganizer ? "Events" : "Home")"
+                   asp-action="Index">
+                    <span class="service-brand-mark">SE</span>
+                    <span class="service-brand-name">Service<span>Events</span></span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation"
+                        aria-expanded="false" aria-label="Открыть меню">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+                <div class="collapse navbar-collapse" id="mainNavigation">
+                    <div class="service-nav-divider"></div>
+                    @if (isAdmin)
+                    {
+                        <ul class="navbar-nav service-nav-links">
+                            <li class="nav-item">
+                                <a class="nav-link @(currentArea == "Admin" && currentController == "Admin" ? "active" : "")"
+                                   asp-area="Admin" asp-controller="Admin" asp-action="Index">Панель</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentArea == "Admin" && currentController == "Events" ? "active" : "")"
+                                   asp-area="Admin" asp-controller="Events" asp-action="Index">Мероприятия</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentArea == "Admin" && currentController == "Users" ? "active" : "")"
+                                   asp-area="Admin" asp-controller="Users" asp-action="Index">Пользователи</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentArea == "Admin" && currentController == "Registrations" ? "active" : "")"
+                                   asp-area="Admin" asp-controller="Registrations" asp-action="Index">Регистрации</a>
+                            </li>
+                        </ul>
+                    }
+                    else if (isOrganizer)
+                    {
+                        <ul class="navbar-nav service-nav-links">
+                            <li class="nav-item">
+                                <a class="nav-link @(currentArea == "Organizer" && currentController == "Events" && ViewContext.RouteData.Values["action"]?.ToString() != "Create" ? "active" : "")"
+                                   asp-area="Organizer" asp-controller="Events" asp-action="Index">Мои мероприятия</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active" : "")"
+                                   asp-area="Organizer" asp-controller="Events" asp-action="Create">Создать мероприятие</a>
+                            </li>
+                        </ul>
+                    }
+                    else if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <ul class="navbar-nav service-nav-links">
+                            <li class="nav-item">
+                                <a class="nav-link @(currentArea != "Admin" && currentController == "Home" ? "active" : "")"
+                                   asp-area="" asp-controller="Home" asp-action="Index">Главная</a>
+                            </li>
+                        </ul>
+                    }
+
+                    <div class="navbar-nav ms-lg-auto align-items-lg-center service-account">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <span class="navbar-text service-user">
+                                <span class="service-user-name">@User.Identity.Name</span>
+                                @if (isAdmin)
+                                {
+                                    <span class="badge rounded-pill service-role-badge">Администратор</span>
+                                }
+                                else if (isOrganizer)
+                                {
+                                    <span class="badge rounded-pill service-role-badge">Организатор</span>
+                                }
+                            </span>
+                            <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">Выйти</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a class="btn btn-primary btn-sm service-login-button" asp-area="" asp-controller="Account" asp-action="Login">Войти</a>
+                        }
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+    <main role="main" class="service-main">
             @RenderBody()
-        </main>
-    </div>
+    </main>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - ServiceEvents.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="service-footer">
+        <div class="container service-shell d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <a class="service-footer-brand" asp-area="" asp-controller="Home" asp-action="Index">ServiceEvents</a>
+            <span>Проводим события, которые объединяют.</span>
+            <span>&copy; 2026 ServiceEvents</span>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

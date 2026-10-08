@@ -1,0 +1,73 @@
+@model IReadOnlyCollection<ServiceEvents.Application.DTOs.EventDTO.EventResponse>
+
+@{
+    ViewData["Title"] = "События (админ)";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+}
+
+<div class="container mt-4">
+    <h1>События (админ)</h1>
+    <a asp-area="Admin" asp-controller="Events" asp-action="Create" class="btn btn-primary mb-3">Создать мероприятие</a>
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="alert alert-secondary">Нет событий</div>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Дата начала</th>
+                    <th>Статус</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ev in Model)
+                {
+                    <tr>
+                        <td>@ev.Title</td>
+                        <td>@ev.StartDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>@ev.Status</td>
+                        <td>
+                            <a asp-area="Admin" asp-controller="Events" asp-action="Details" asp-route-id="@ev.EventId" class="btn btn-sm btn-link">Детали</a>
+                            <a asp-area="Admin" asp-controller="Events" asp-action="Edit" asp-route-id="@ev.EventId" class="btn btn-sm btn-primary">Редактировать</a>
+
+                            <form asp-area="Admin" asp-controller="Events" asp-action="Publish" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@ev.EventId" />
+                                <button type="submit" class="btn btn-sm btn-success">Опубликовать</button>
+                            </form>
+
+                            <form asp-area="Admin" asp-controller="Events" asp-action="CloseRegistration" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@ev.EventId" />
+                                <button type="submit" class="btn btn-sm btn-warning">Закрыть регистрацию</button>
+                            </form>
+
+                            <form asp-area="Admin" asp-controller="Events" asp-action="Cancel" method="post" class="d-inline" onsubmit="return confirm('Отменить событие?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@ev.EventId" />
+                                <button type="submit" class="btn btn-sm btn-danger">Отменить</button>
+                            </form>
+
+                            <form asp-area="Admin" asp-controller="Events" asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Удалить событие без возможности восстановления?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@ev.EventId" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
