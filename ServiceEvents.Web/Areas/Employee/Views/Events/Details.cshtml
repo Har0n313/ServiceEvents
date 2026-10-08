@@ -19,9 +19,9 @@
     }
 
     <article class="employee-event-detail mt-4">
-        @if (!string.IsNullOrWhiteSpace(Model.Event.ImagePath))
+        @if (EventImagePath.GetSource(Model.Event.ImagePath) is string imageSource)
         {
-            <img class="employee-event-detail-image" src="@Url.Content(Model.Event.ImagePath)" alt="@Model.Event.Title" />
+            <img class="employee-event-detail-image" src="@Url.Content(imageSource)" alt="@Model.Event.Title" />
         }
         <span class="employee-event-tag">МЕРОПРИЯТИЕ</span>
         <h1>@Model.Event.Title</h1>

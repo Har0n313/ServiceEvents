@@ -70,6 +70,7 @@ public class EventsController : Controller
     {
         var availableProperties = await _propertyService.GetGlobalAsync(cancellationToken);
         model.AvailableProperties = availableProperties;
+        ValidateImagePath(model.ImagePath);
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -195,6 +196,7 @@ public class EventsController : Controller
             return NotFound();
         }
 
+        ValidateImagePath(request.ImagePath);
         if (!ModelState.IsValid)
         {
             await PrepareEditPropertiesAsync(request.EventId, cancellationToken, propertyValues);
@@ -242,6 +244,16 @@ public class EventsController : Controller
 
         var savedValues = await _propertyService.GetValuesByEventIdAsync(eventId, cancellationToken);
         ViewData["PropertyValues"] = savedValues.ToDictionary(value => value.PropertyId, value => value.Value);
+    }
+
+    private void ValidateImagePath(string? imagePath)
+    {
+        if (!EventImagePath.IsValid(imagePath))
+        {
+            ModelState.AddModelError(
+                nameof(UpdateEventRequest.ImagePath),
+                "Укажите путь к изображению сайта или безопасную ссылку HTTPS.");
+        }
     }
 
     [HttpPost]

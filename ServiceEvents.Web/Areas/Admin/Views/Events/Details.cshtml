@@ -19,9 +19,9 @@
     <h1>@Model.Title</h1>
 
     <p class="text-muted">@Model.StartDate.ToLocalTime().ToString("dd.MM.yyyy HH:mm") · @Model.Status.ToRussian()</p>
-    @if (!string.IsNullOrWhiteSpace(Model.ImagePath))
+    @if (EventImagePath.GetSource(Model.ImagePath) is string imageSource)
     {
-        <img src="@Url.Content(Model.ImagePath)" alt="@Model.Title" class="img-fluid rounded mb-3" style="max-height: 360px; object-fit: cover;" />
+        <img src="@Url.Content(imageSource)" alt="@Model.Title" class="event-detail-image mb-3" />
     }
 
     <div class="mt-3">

@@ -55,9 +55,10 @@
             <span asp-validation-for="MaxParticipants" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="ImagePath" class="form-label">Путь к изображению</label>
+            <label asp-for="ImagePath" class="form-label">Ссылка или путь к изображению</label>
             <input asp-for="ImagePath" class="form-control" />
             <span asp-validation-for="ImagePath" class="text-danger"></span>
+            <div class="form-text">Укажите путь сайта, например /images/event.jpg, или ссылку HTTPS.</div>
         </div>
 
         @if (Model.AvailableProperties.Count > 0)

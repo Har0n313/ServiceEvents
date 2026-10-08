@@ -53,6 +53,7 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
         {
             var availableProperties = await _propertyService.GetGlobalAsync(cancellationToken);
             model.AvailableProperties = availableProperties;
+            ValidateImagePath(model.ImagePath);
             if (!ModelState.IsValid
                 || !EventPropertyValues.Validate(model.PropertyValues, availableProperties, ModelState))
             {
@@ -138,6 +139,7 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
         {
             var availableProperties = await _propertyService.GetGlobalAsync(cancellationToken);
             propertyValues ??= [];
+            ValidateImagePath(request.ImagePath);
             if (!ModelState.IsValid
                 || !EventPropertyValues.Validate(propertyValues, availableProperties, ModelState))
             {
@@ -178,6 +180,16 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
 
             var savedValues = await _propertyService.GetValuesByEventIdAsync(eventId, cancellationToken);
             ViewData["PropertyValues"] = savedValues.ToDictionary(value => value.PropertyId, value => value.Value);
+        }
+
+        private void ValidateImagePath(string? imagePath)
+        {
+            if (!EventImagePath.IsValid(imagePath))
+            {
+                ModelState.AddModelError(
+                    nameof(UpdateEventRequest.ImagePath),
+                    "Укажите путь к изображению сайта или безопасную ссылку HTTPS.");
+            }
         }
 
         [HttpPost]

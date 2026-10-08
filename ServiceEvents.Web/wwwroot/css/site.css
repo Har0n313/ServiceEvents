@@ -966,6 +966,16 @@ a:focus-visible {
   object-fit: cover;
 }
 
+.event-detail-image {
+  display: block;
+  width: 100%;
+  max-height: 360px;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  background: #edf5fb;
+  object-fit: cover;
+}
+
 .employee-event-detail h1 {
   margin: 17px 0;
   color: var(--service-ink);

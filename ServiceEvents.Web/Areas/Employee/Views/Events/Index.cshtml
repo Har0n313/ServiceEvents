@@ -40,9 +40,9 @@
             {
                 var isRegistered = item.RegistrationStatus == RegistrationStatus.Active;
                 <article class="employee-event-card">
-                    @if (!string.IsNullOrWhiteSpace(item.Event.ImagePath))
+                    @if (EventImagePath.GetSource(item.Event.ImagePath) is string imageSource)
                     {
-                        <img class="employee-event-image" src="@Url.Content(item.Event.ImagePath)" alt="@item.Event.Title" loading="lazy" />
+                        <img class="employee-event-image" src="@Url.Content(imageSource)" alt="@item.Event.Title" loading="lazy" />
                     }
                     <div class="employee-event-card-top">
                         <span class="employee-event-tag">МЕРОПРИЯТИЕ</span>
