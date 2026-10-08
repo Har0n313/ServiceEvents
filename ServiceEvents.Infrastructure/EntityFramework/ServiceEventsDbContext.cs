@@ -13,6 +13,7 @@ public class ServiceEventsDbContext : DbContext
     }
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<Department> Departments => Set<Department>();
     public DbSet<Event> Events => Set<Event>();
     public DbSet<EventRegistration> EventRegistrations => Set<EventRegistration>();
     public DbSet<EventProperty> EventProperties => Set<EventProperty>();

@@ -20,8 +20,7 @@ public sealed class AdminCreateUserViewModel
     public string FullName { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(200)]
-    public string Department { get; set; } = string.Empty;
+    public Guid DepartmentId { get; set; }
 
     [Required]
     [StringLength(200)]

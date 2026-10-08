@@ -5,9 +5,9 @@ namespace ServiceEvents.Application.DTOs.EventPropertyDTO
 {
     public sealed record UpdateEventPropertyRequest(
     Guid PropertyId,
-    [property: Required]
-    [property: StringLength(200)]
+    [param: Required]
+    [param: StringLength(200)]
     string Name,
-    [property: EnumDataType(typeof(PropertyDataType))]
+    [param: EnumDataType(typeof(PropertyDataType))]
     PropertyDataType DataType);
 }

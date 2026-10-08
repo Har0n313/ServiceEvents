@@ -19,6 +19,7 @@ public class UserRepository
     {
         return await DbSet
             .AsNoTracking()
+            .Include(user => user.Department)
             .ToListAsync(cancellationToken);
     }
 
@@ -28,6 +29,7 @@ public class UserRepository
     {
         return await DbSet
             .AsNoTracking()
+            .Include(user => user.Department)
             .Where(x => x.Role == role)
             .ToListAsync(cancellationToken);
     }
@@ -38,6 +40,16 @@ public class UserRepository
     {
         return await DbSet
             .AsNoTracking()
+            .Include(user => user.Department)
             .FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
+    }
+
+    public Task<User?> GetWithDepartmentByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        return DbSet
+            .Include(user => user.Department)
+            .FirstOrDefaultAsync(user => user.Id == id, cancellationToken);
     }
 }

@@ -18,6 +18,7 @@ public class EventRepository
     {
         return await DbSet
             .AsNoTracking()
+            .Include(eventItem => eventItem.Department)
             .ToListAsync(cancellationToken);
     }
 
@@ -27,7 +28,17 @@ public class EventRepository
     {
         return await DbSet
             .AsNoTracking()
+            .Include(eventItem => eventItem.Department)
             .Where(x => x.OrganizerId == organizerId)
             .ToListAsync(cancellationToken);
+    }
+
+    public Task<Event?> GetWithDepartmentByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        return DbSet
+            .Include(eventItem => eventItem.Department)
+            .FirstOrDefaultAsync(eventItem => eventItem.Id == id, cancellationToken);
     }
 }

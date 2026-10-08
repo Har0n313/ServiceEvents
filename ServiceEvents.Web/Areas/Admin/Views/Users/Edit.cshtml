@@ -17,9 +17,15 @@
             <span asp-validation-for="FullName" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="Department" class="form-label">Департамент</label>
-            <input asp-for="Department" class="form-control" />
-            <span asp-validation-for="Department" class="text-danger"></span>
+            <label asp-for="DepartmentId" class="form-label">Департамент</label>
+            <select asp-for="DepartmentId" class="form-select">
+                <option value="">Выберите департамент</option>
+                @foreach (var department in (IReadOnlyCollection<ServiceEvents.Application.DTOs.DepartmentDTO.DepartmentResponse>)ViewData["Departments"]!)
+                {
+                    <option value="@department.DepartmentId">@department.Name</option>
+                }
+            </select>
+            <span asp-validation-for="DepartmentId" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label asp-for="Position" class="form-label">Должность</label>

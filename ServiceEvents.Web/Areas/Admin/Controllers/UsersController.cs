@@ -14,13 +14,16 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IDepartmentService _departmentService;
         private readonly IPasswordHasher<User> _passwordHasher;
 
         public UsersController(
             IUserService userService,
+            IDepartmentService departmentService,
             IPasswordHasher<User> passwordHasher)
         {
             _userService = userService;
+            _departmentService = departmentService;
             _passwordHasher = passwordHasher;
         }
 
@@ -31,8 +34,9 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create(CancellationToken cancellationToken)
         {
+            await LoadDepartmentsAsync(cancellationToken);
             return View(new AdminCreateUserViewModel());
         }
 
@@ -42,11 +46,15 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
             AdminCreateUserViewModel request,
             CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid) return View(request);
+            if (!ModelState.IsValid)
+            {
+                await LoadDepartmentsAsync(cancellationToken);
+                return View(request);
+            }
 
             var user = new User(
                 request.FullName,
-                request.Department,
+                request.DepartmentId,
                 request.Position,
                 request.Email,
                 request.Role);
@@ -58,7 +66,7 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
                     new CreateUserRequest(
                         request.Email,
                         request.FullName,
-                        request.Department,
+                        request.DepartmentId,
                         request.Position,
                         request.Role),
                     passwordHash,
@@ -66,7 +74,11 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
             }
             catch (InvalidOperationException exception)
             {
-                ModelState.AddModelError(nameof(request.Email), exception.Message);
+                var field = exception.Message.Contains("email", StringComparison.OrdinalIgnoreCase)
+                    ? nameof(request.Email)
+                    : nameof(request.DepartmentId);
+                ModelState.AddModelError(field, exception.Message);
+                await LoadDepartmentsAsync(cancellationToken);
                 return View(request);
             }
 
@@ -78,10 +90,11 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
         {
             var user = await _userService.GetByIdAsync(id, cancellationToken);
             if (user == null) return NotFound();
+            await LoadDepartmentsAsync(cancellationToken);
             return View(new UpdateUserRequest(
                 user.UserId,
                 user.FullName,
-                user.Department,
+                user.DepartmentId,
                 user.Position));
         }
 
@@ -89,10 +102,28 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UpdateUserRequest request, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid) return View(request);
-            await _userService.UpdateAsync(request.UserId, request, cancellationToken);
+            if (!ModelState.IsValid)
+            {
+                await LoadDepartmentsAsync(cancellationToken);
+                return View(request);
+            }
+            try
+            {
+                await _userService.UpdateAsync(request.UserId, request, cancellationToken);
+            }
+            catch (InvalidOperationException exception)
+            {
+                ModelState.AddModelError(nameof(request.DepartmentId), exception.Message);
+                await LoadDepartmentsAsync(cancellationToken);
+                return View(request);
+            }
             TempData["Message"] = "Пользователь сохранён.";
             return RedirectToAction("Index");
+        }
+
+        private async Task LoadDepartmentsAsync(CancellationToken cancellationToken)
+        {
+            ViewData["Departments"] = await _departmentService.GetAllAsync(cancellationToken);
         }
 
         [HttpPost]

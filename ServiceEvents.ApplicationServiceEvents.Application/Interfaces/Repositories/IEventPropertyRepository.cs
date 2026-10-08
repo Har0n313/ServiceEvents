@@ -5,6 +5,9 @@ namespace ServiceEvents.Application.Interfaces.Repositories;
 public interface IEventPropertyRepository 
     : IRepository<EventProperty>
 {
+    Task<IReadOnlyCollection<EventProperty>> GetAllAsync(
+        CancellationToken cancellationToken = default);
+
     Task<IReadOnlyCollection<EventProperty>> GetGlobalAsync(
         CancellationToken cancellationToken = default);
 

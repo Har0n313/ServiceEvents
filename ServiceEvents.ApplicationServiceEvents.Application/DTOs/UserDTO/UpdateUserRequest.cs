@@ -3,6 +3,6 @@
     public sealed record UpdateUserRequest(
     Guid UserId,
     string FullName,
-    string Department,
+    Guid DepartmentId,
     string Position);
 }

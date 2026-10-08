@@ -62,6 +62,10 @@
                                 <a class="nav-link @(currentArea == "Admin" && currentController == "Properties" ? "active" : "")"
                                    asp-area="Admin" asp-controller="Properties" asp-action="Index">Характеристики</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentArea == "Admin" && currentController == "Departments" ? "active" : "")"
+                                   asp-area="Admin" asp-controller="Departments" asp-action="Index">Департаменты</a>
+                            </li>
                         </ul>
                     }
                     else if (isOrganizer)

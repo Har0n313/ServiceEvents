@@ -13,6 +13,14 @@ public class EventPropertyRepository
     {
     }
 
+    public async Task<IReadOnlyCollection<EventProperty>> GetAllAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return await DbSet
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<IReadOnlyCollection<EventProperty>> GetGlobalAsync(
         CancellationToken cancellationToken = default)
     {

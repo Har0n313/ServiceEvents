@@ -48,16 +48,13 @@ public class EventsController : Controller
             registration => registration.Status);
         var propertiesByEvent = await GetEventPropertiesAsync(
             events.Where(eventItem => eventItem.Status == EventStatus.Published
-                && string.Equals(eventItem.Department, employee.Department, StringComparison.OrdinalIgnoreCase))
+                && eventItem.DepartmentId == employee.DepartmentId)
                 .Select(eventItem => eventItem.EventId),
             cancellationToken);
 
         var model = events
             .Where(eventItem => eventItem.Status == EventStatus.Published)
-            .Where(eventItem => string.Equals(
-                eventItem.Department,
-                employee.Department,
-                StringComparison.OrdinalIgnoreCase))
+            .Where(eventItem => eventItem.DepartmentId == employee.DepartmentId)
             .OrderBy(eventItem => eventItem.StartDate)
             .Select(eventItem => new EmployeeEventViewModel(
                 eventItem,
@@ -107,7 +104,7 @@ public class EventsController : Controller
 
         var employee = await _userService.GetByIdAsync(employeeId, cancellationToken);
         if (employee is null
-            || !string.Equals(eventItem.Department, employee.Department, StringComparison.OrdinalIgnoreCase))
+            || eventItem.DepartmentId != employee.DepartmentId)
         {
             return NotFound();
         }

@@ -10,7 +10,8 @@ public static class UserProfile
         return new UserResponse(
             entity.Id,
             entity.FullName,
-            entity.Department,
+            entity.DepartmentId,
+            entity.Department.Name,
             entity.Position,
             entity.Role);
     }

@@ -9,15 +9,18 @@ namespace ServiceEvents.Application.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IDepartmentRepository _departmentRepository;
     private readonly IEventRepository _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public UserService(
         IUserRepository userRepository,
+        IDepartmentRepository departmentRepository,
         IEventRepository eventRepository,
         IUnitOfWork unitOfWork)
     {
         _userRepository = userRepository;
+        _departmentRepository = departmentRepository;
         _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
     }
@@ -37,7 +40,7 @@ public class UserService : IUserService
         Guid id,
         CancellationToken cancellationToken = default)
     {
-        var user = await _userRepository.GetByIdAsync(
+        var user = await _userRepository.GetWithDepartmentByIdAsync(
             id,
             cancellationToken);
 
@@ -67,12 +70,14 @@ public class UserService : IUserService
             throw new InvalidOperationException("Пользователь с таким email уже существует.");
         }
 
+        var department = await GetDepartmentAsync(request.DepartmentId, cancellationToken);
         var user = new Domain.Entities.User(
             request.FullName,
-            request.Department,
+            request.DepartmentId,
             request.Position,
             request.Email,
             request.Role);
+        user.SetDepartment(department);
         user.SetPasswordHash(passwordHash);
 
         await _userRepository.AddAsync(user, cancellationToken);
@@ -90,10 +95,12 @@ public class UserService : IUserService
             id,
             cancellationToken);
 
+        var department = await GetDepartmentAsync(request.DepartmentId, cancellationToken);
         user.UpdateInformation(
             request.FullName,
-            request.Department,
+            request.DepartmentId,
             request.Position);
+        user.SetDepartment(department);
 
         await _userRepository.UpdateAsync(
             user,
@@ -153,7 +160,7 @@ public class UserService : IUserService
         Guid id,
         CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByIdAsync(
+        var user = await _userRepository.GetWithDepartmentByIdAsync(
             id,
             cancellationToken);
 
@@ -164,5 +171,13 @@ public class UserService : IUserService
         }
 
         return user;
+    }
+
+    private async Task<Domain.Entities.Department> GetDepartmentAsync(
+        Guid departmentId,
+        CancellationToken cancellationToken)
+    {
+        return await _departmentRepository.GetByIdAsync(departmentId, cancellationToken)
+            ?? throw new InvalidOperationException("Выбранный департамент не найден.");
     }
 }

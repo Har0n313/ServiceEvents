@@ -11,7 +11,9 @@ public class User : BaseEntity
 
     public string? PasswordHash { get; private set; }
 
-    public string Department { get; private set; } = string.Empty;
+    public Guid DepartmentId { get; private set; }
+
+    public Department Department { get; private set; } = null!;
 
     public string Position { get; private set; } = string.Empty;
 
@@ -29,13 +31,13 @@ public class User : BaseEntity
 
     public User(
         string fullName,
-        string department,
+        Guid departmentId,
         string position,
         string email,
         UserRole role = UserRole.Employee)
     {
         FullName = fullName;
-        Department = department;
+        DepartmentId = departmentId;
         Position = position;
         Email = email;
         Role = role;
@@ -43,12 +45,18 @@ public class User : BaseEntity
 
     public void UpdateInformation(
         string fullName,
-        string department,
+        Guid departmentId,
         string position)
     {
         FullName = fullName;
-        Department = department;
+        DepartmentId = departmentId;
         Position = position;
+    }
+
+    public void SetDepartment(Department department)
+    {
+        Department = department;
+        DepartmentId = department.Id;
     }
 
     public void ChangeRole(UserRole role)
