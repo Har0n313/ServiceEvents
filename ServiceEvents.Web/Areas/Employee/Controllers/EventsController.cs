@@ -13,13 +13,19 @@ public class EventsController : Controller
 {
     private readonly IEventService _eventService;
     private readonly IEventRegistrationService _registrationService;
+    private readonly IUserService _userService;
+    private readonly IEventPropertyService _propertyService;
 
     public EventsController(
         IEventService eventService,
-        IEventRegistrationService registrationService)
+        IEventRegistrationService registrationService,
+        IUserService userService,
+        IEventPropertyService propertyService)
     {
         _eventService = eventService;
         _registrationService = registrationService;
+        _userService = userService;
+        _propertyService = propertyService;
     }
 
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -29,18 +35,34 @@ public class EventsController : Controller
             return Forbid();
         }
 
+        var employee = await _userService.GetByIdAsync(employeeId, cancellationToken);
+        if (employee is null)
+        {
+            return Forbid();
+        }
+
         var events = await _eventService.GetAllAsync(cancellationToken);
         var registrations = await _registrationService.GetByUserIdAsync(employeeId, cancellationToken);
         var registrationStatuses = registrations.ToDictionary(
             registration => registration.EventId,
             registration => registration.Status);
+        var propertiesByEvent = await GetEventPropertiesAsync(
+            events.Where(eventItem => eventItem.Status == EventStatus.Published
+                && string.Equals(eventItem.Department, employee.Department, StringComparison.OrdinalIgnoreCase))
+                .Select(eventItem => eventItem.EventId),
+            cancellationToken);
 
         var model = events
             .Where(eventItem => eventItem.Status == EventStatus.Published)
+            .Where(eventItem => string.Equals(
+                eventItem.Department,
+                employee.Department,
+                StringComparison.OrdinalIgnoreCase))
             .OrderBy(eventItem => eventItem.StartDate)
             .Select(eventItem => new EmployeeEventViewModel(
                 eventItem,
-                registrationStatuses.TryGetValue(eventItem.EventId, out var status) ? status : null))
+                registrationStatuses.TryGetValue(eventItem.EventId, out var status) ? status : null,
+                propertiesByEvent.GetValueOrDefault(eventItem.EventId, [])))
             .ToList();
 
         return View(model);
@@ -83,10 +105,21 @@ public class EventsController : Controller
             return Forbid();
         }
 
+        var employee = await _userService.GetByIdAsync(employeeId, cancellationToken);
+        if (employee is null
+            || !string.Equals(eventItem.Department, employee.Department, StringComparison.OrdinalIgnoreCase))
+        {
+            return NotFound();
+        }
+
         var registrations = await _registrationService.GetByUserIdAsync(employeeId, cancellationToken);
         var registration = registrations.FirstOrDefault(item => item.EventId == id);
 
-        return View(new EmployeeEventViewModel(eventItem, registration?.Status));
+        var propertiesByEvent = await GetEventPropertiesAsync([id], cancellationToken);
+        return View(new EmployeeEventViewModel(
+            eventItem,
+            registration?.Status,
+            propertiesByEvent.GetValueOrDefault(id, [])));
     }
 
     [HttpPost]
@@ -142,5 +175,26 @@ public class EventsController : Controller
         return Guid.TryParse(
             User.FindFirstValue(ClaimTypes.NameIdentifier),
             out employeeId);
+    }
+
+    private async Task<Dictionary<Guid, IReadOnlyCollection<EventPropertyValueViewModel>>> GetEventPropertiesAsync(
+        IEnumerable<Guid> eventIds,
+        CancellationToken cancellationToken)
+    {
+        var result = new Dictionary<Guid, IReadOnlyCollection<EventPropertyValueViewModel>>();
+        foreach (var eventId in eventIds)
+        {
+            var values = await _propertyService.GetValuesByEventIdAsync(eventId, cancellationToken);
+            var properties = await _propertyService.GetByEventIdAsync(eventId, cancellationToken);
+            var namesById = properties.ToDictionary(property => property.PropertyId, property => property.Name);
+            result[eventId] = values
+                .Where(value => namesById.ContainsKey(value.PropertyId))
+                .Select(value => new EventPropertyValueViewModel(
+                    namesById[value.PropertyId],
+                    value.Value))
+                .ToList();
+        }
+
+        return result;
     }
 }

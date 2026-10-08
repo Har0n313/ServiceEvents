@@ -9,13 +9,16 @@ namespace ServiceEvents.Application.Services;
 public class EventService : IEventService
 {
     private readonly IEventRepository _eventRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public EventService(
         IEventRepository eventRepository,
+        IUserRepository userRepository,
         IUnitOfWork unitOfWork)
     {
         _eventRepository = eventRepository;
+        _userRepository = userRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -59,6 +62,12 @@ public class EventService : IEventService
         Guid organizerId,
         CancellationToken cancellationToken = default)
     {
+        var organizer = await _userRepository.GetByIdAsync(organizerId, cancellationToken);
+        if (organizer is null)
+        {
+            throw new KeyNotFoundException($"Organizer with id '{organizerId}' was not found.");
+        }
+
         var eventEntity = new Event(
             request.Title,
             request.Description,
@@ -67,7 +76,8 @@ public class EventService : IEventService
             request.Location,
             request.EndDate,
             request.MaxParticipants,
-            request.ImagePath);
+            request.ImagePath,
+            organizer.Department);
 
         await _eventRepository.AddAsync(
             eventEntity,

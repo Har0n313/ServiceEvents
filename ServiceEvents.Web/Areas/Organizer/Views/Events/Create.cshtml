@@ -71,6 +71,34 @@
                     <span asp-validation-for="ImagePath" class="text-danger"></span>
                 </div>
 
+                @if (Model.AvailableProperties.Count > 0)
+                {
+                    <h2 class="h5 mb-3">Характеристики</h2>
+                    @foreach (var property in Model.AvailableProperties)
+                    {
+                        <div class="mb-3">
+                            <label class="form-label" for="property-@property.PropertyId">@property.Name</label>
+                            @if (property.DataType == ServiceEvents.Domain.Enums.PropertyDataType.Boolean)
+                            {
+                                <select id="property-@property.PropertyId" name="PropertyValues[@property.PropertyId]" class="form-select">
+                                    <option value="">Не указано</option>
+                                    <option value="Да" selected="@(Model.PropertyValues.GetValueOrDefault(property.PropertyId) == "Да")">Да</option>
+                                    <option value="Нет" selected="@(Model.PropertyValues.GetValueOrDefault(property.PropertyId) == "Нет")">Нет</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input id="property-@property.PropertyId"
+                                       name="PropertyValues[@property.PropertyId]"
+                                       value="@Model.PropertyValues.GetValueOrDefault(property.PropertyId)"
+                                       type="@(property.DataType == ServiceEvents.Domain.Enums.PropertyDataType.Integer ? "number" : "text")"
+                                       class="form-control" />
+                            }
+                            <span class="text-danger">@Html.ValidationMessage($"PropertyValues[{property.PropertyId}]")</span>
+                        </div>
+                    }
+                }
+
                 <button type="submit" class="btn btn-primary">Создать мероприятие</button>
                 <a asp-area="Organizer" asp-controller="Events" asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
             </form>

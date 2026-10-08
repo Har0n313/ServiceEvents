@@ -1,11 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using ServiceEvents.Application.DTOs.EventDTO;
+using ServiceEvents.Application.DTOs.EventPropertyDTO;
 
 namespace ServiceEvents.Web.Models;
 
 public sealed class CreateEventViewModel
 {
+    public IReadOnlyCollection<EventPropertyResponse> AvailableProperties { get; set; }
+        = Array.Empty<EventPropertyResponse>();
+
+    public Dictionary<Guid, string> PropertyValues { get; set; } = [];
+
     [Required]
     [StringLength(200)]
     public string Title { get; set; } = string.Empty;

@@ -32,6 +32,10 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
         builder.Property(x => x.ImagePath)
             .HasMaxLength(500);
 
+        builder.Property(x => x.Department)
+            .IsRequired()
+            .HasMaxLength(200);
+
         builder.Property(x => x.Status)
             .IsRequired()
             .HasConversion<int>();

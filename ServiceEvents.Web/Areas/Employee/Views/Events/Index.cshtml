@@ -40,6 +40,10 @@
             {
                 var isRegistered = item.RegistrationStatus == RegistrationStatus.Active;
                 <article class="employee-event-card">
+                    @if (!string.IsNullOrWhiteSpace(item.Event.ImagePath))
+                    {
+                        <img class="employee-event-image" src="@Url.Content(item.Event.ImagePath)" alt="@item.Event.Title" loading="lazy" />
+                    }
                     <div class="employee-event-card-top">
                         <span class="employee-event-tag">МЕРОПРИЯТИЕ</span>
                         <span class="employee-event-date">@DateTime.SpecifyKind(item.Event.StartDate, DateTimeKind.Utc).ToLocalTime().ToString("dd.MM.yyyy")</span>
@@ -50,6 +54,15 @@
                         <span>@DateTime.SpecifyKind(item.Event.StartDate, DateTimeKind.Utc).ToLocalTime().ToString("HH:mm")</span>
                         <span>@(string.IsNullOrWhiteSpace(item.Event.Location) ? "Место уточняется" : item.Event.Location)</span>
                     </div>
+                    @if (item.Properties.Count > 0)
+                    {
+                        <div class="employee-event-properties">
+                            @foreach (var property in item.Properties.Take(3))
+                            {
+                                <span><strong>@property.Name:</strong> @property.Value</span>
+                            }
+                        </div>
+                    }
                     <div class="employee-event-actions">
                         <a asp-area="Employee" asp-controller="Events" asp-action="Details" asp-route-id="@item.Event.EventId" class="employee-event-details">Подробнее <span aria-hidden="true">→</span></a>
                         @if (isRegistered)

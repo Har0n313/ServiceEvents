@@ -42,7 +42,10 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
             var props = await _propertyService.GetGlobalAsync(cancellationToken);
             var prop = props.FirstOrDefault(p => p.PropertyId == id);
             if (prop == null) return NotFound();
-            return View(prop);
+            return View(new UpdateEventPropertyRequest(
+                prop.PropertyId,
+                prop.Name,
+                prop.DataType));
         }
 
         [HttpPost]

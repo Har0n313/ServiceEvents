@@ -12,10 +12,14 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
     public class EventsController : Controller
     {
         private readonly IEventService _eventService;
+        private readonly IEventPropertyService _propertyService;
 
-        public EventsController(IEventService eventService)
+        public EventsController(
+            IEventService eventService,
+            IEventPropertyService propertyService)
         {
             _eventService = eventService;
+            _propertyService = propertyService;
         }
 
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -25,16 +29,18 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create(CancellationToken cancellationToken)
         {
-            return View(CreateEventViewModel.FromRequest(new CreateEventRequest(
+            var model = CreateEventViewModel.FromRequest(new CreateEventRequest(
                 string.Empty,
                 string.Empty,
                 DateTime.Now.AddDays(1),
                 null,
                 null,
                 null,
-                null)));
+                null));
+            model.AvailableProperties = await _propertyService.GetGlobalAsync(cancellationToken);
+            return View(model);
         }
 
         [HttpPost]
@@ -45,7 +51,13 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
             int? startDateOffsetMinutes = null,
             int? endDateOffsetMinutes = null)
         {
-            if (!ModelState.IsValid) return View(model);
+            var availableProperties = await _propertyService.GetGlobalAsync(cancellationToken);
+            model.AvailableProperties = availableProperties;
+            if (!ModelState.IsValid
+                || !EventPropertyValues.Validate(model.PropertyValues, availableProperties, ModelState))
+            {
+                return View(model);
+            }
 
             if (!model.TryParseDates(out var startDate, out var endDate))
             {
@@ -74,7 +86,13 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
                     ? ConvertLocalDateToUtc(localEndDate, endDateOffsetMinutes ?? startDateOffsetMinutes)
                     : null);
 
-            await _eventService.CreateAsync(request, organizerId, cancellationToken);
+            var createdEvent = await _eventService.CreateAsync(request, organizerId, cancellationToken);
+            await EventPropertyValues.SaveAsync(
+                createdEvent.EventId,
+                model.PropertyValues,
+                availableProperties,
+                _propertyService,
+                cancellationToken);
             TempData["Message"] = "Мероприятие создано.";
             return RedirectToAction(nameof(Index));
         }
@@ -83,13 +101,19 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
         {
             var ev = await _eventService.GetByIdAsync(id, cancellationToken);
             if (ev == null) return NotFound();
+            ViewData["EventProperties"] = await EventPropertyValues.GetDisplayAsync(
+                id,
+                _propertyService,
+                cancellationToken);
             return View(ev);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid id, CancellationToken cancellationToken)
         {
             var ev = await _eventService.GetByIdAsync(id, cancellationToken);
             if (ev == null) return NotFound();
+            await PrepareEditPropertiesAsync(id, cancellationToken);
             return View(new UpdateEventRequest(
                 ev.EventId,
                 ev.Title,
@@ -107,11 +131,19 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             UpdateEventRequest request,
+            Dictionary<Guid, string>? propertyValues,
             int? startDateOffsetMinutes,
             int? endDateOffsetMinutes,
             CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid) return View(request);
+            var availableProperties = await _propertyService.GetGlobalAsync(cancellationToken);
+            propertyValues ??= [];
+            if (!ModelState.IsValid
+                || !EventPropertyValues.Validate(propertyValues, availableProperties, ModelState))
+            {
+                await PrepareEditPropertiesAsync(request.EventId, cancellationToken, propertyValues);
+                return View(request);
+            }
 
             request = request with
             {
@@ -122,8 +154,30 @@ namespace ServiceEvents.Web.Areas.Admin.Controllers
             };
 
             await _eventService.UpdateAsync(request.EventId, request, cancellationToken);
+            await EventPropertyValues.SaveAsync(
+                request.EventId,
+                propertyValues,
+                availableProperties,
+                _propertyService,
+                cancellationToken);
             TempData["Message"] = "Событие сохранено.";
             return RedirectToAction("Index");
+        }
+
+        private async Task PrepareEditPropertiesAsync(
+            Guid eventId,
+            CancellationToken cancellationToken,
+            Dictionary<Guid, string>? submittedValues = null)
+        {
+            ViewData["AvailableProperties"] = await _propertyService.GetGlobalAsync(cancellationToken);
+            if (submittedValues is not null)
+            {
+                ViewData["PropertyValues"] = submittedValues;
+                return;
+            }
+
+            var savedValues = await _propertyService.GetValuesByEventIdAsync(eventId, cancellationToken);
+            ViewData["PropertyValues"] = savedValues.ToDictionary(value => value.PropertyId, value => value.Value);
         }
 
         [HttpPost]

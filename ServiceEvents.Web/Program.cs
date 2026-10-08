@@ -46,8 +46,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// Run database seeder
-await ServiceEvents.Web.Data.Seeder.SeedAsync(app.Services, CancellationToken.None);
+if (app.Environment.IsDevelopment())
+{
+    await ServiceEvents.Web.Data.Seeder.SeedAsync(app.Services, CancellationToken.None);
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

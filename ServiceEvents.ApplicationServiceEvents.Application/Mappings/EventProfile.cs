@@ -16,6 +16,7 @@ public static class EventProfile
             entity.Location,
             entity.MaxParticipants,
             entity.ImagePath,
+            entity.Department,
             entity.Status,
             entity.OrganizerId,
             entity.CreatedAt,

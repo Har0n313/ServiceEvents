@@ -1,3 +1,5 @@
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostEnvironment
+
 @{
     ViewData["Title"] = "Вход";
 }
@@ -26,5 +28,14 @@
             </div>
             <button type="submit" class="btn btn-primary w-100 service-primary-button">Войти <span aria-hidden="true">→</span></button>
         </form>
+        @if (HostEnvironment.IsDevelopment())
+        {
+            <div class="alert alert-light border mt-4 mb-0">
+                <strong>Тестовые учётные записи</strong>
+                <div class="small mt-2">Администратор: admin@localhost / Admin123!</div>
+                <div class="small">Организатор: organizer@localhost / Organizer123!</div>
+                <div class="small">Сотрудник: employee@localhost / Employee123!</div>
+            </div>
+        }
     </div>
 </section>

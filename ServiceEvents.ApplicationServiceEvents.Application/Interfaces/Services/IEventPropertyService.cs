@@ -1,4 +1,5 @@
 ﻿using ServiceEvents.Application.DTOs.EventPropertyDTO;
+using ServiceEvents.Application.DTOs.EventPropertyValueDTO;
 
 namespace ServiceEvents.Application.Interfaces.Services;
 
@@ -8,6 +9,10 @@ public interface IEventPropertyService
         CancellationToken cancellationToken = default);
 
     Task<IReadOnlyCollection<EventPropertyResponse>> GetByEventIdAsync(
+        Guid eventId,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyCollection<EventPropertyValueResponse>> GetValuesByEventIdAsync(
         Guid eventId,
         CancellationToken cancellationToken = default);
 

@@ -19,6 +19,10 @@
     }
 
     <article class="employee-event-detail mt-4">
+        @if (!string.IsNullOrWhiteSpace(Model.Event.ImagePath))
+        {
+            <img class="employee-event-detail-image" src="@Url.Content(Model.Event.ImagePath)" alt="@Model.Event.Title" />
+        }
         <span class="employee-event-tag">МЕРОПРИЯТИЕ</span>
         <h1>@Model.Event.Title</h1>
         <div class="employee-event-detail-meta">
@@ -34,6 +38,17 @@
             }
         </div>
         <div class="employee-event-detail-description">@Model.Event.Description</div>
+
+        @if (Model.Properties.Count > 0)
+        {
+            <div class="employee-event-properties employee-event-properties-detail">
+                <h2 class="h5">Характеристики</h2>
+                @foreach (var property in Model.Properties)
+                {
+                    <span><strong>@property.Name:</strong> @property.Value</span>
+                }
+            </div>
+        }
 
         @if (isRegistered)
         {

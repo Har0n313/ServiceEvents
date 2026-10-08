@@ -1,0 +1,33 @@
+@model ServiceEvents.Application.DTOs.EventPropertyDTO.CreateEventPropertyRequest
+
+@{
+    ViewData["Title"] = "Добавить характеристику";
+}
+
+<section class="container service-shell py-5">
+    <a asp-area="Admin" asp-controller="Properties" asp-action="Index" class="text-decoration-none">← К характеристикам</a>
+    <h1 class="mt-3 mb-4">@ViewData["Title"]</h1>
+    <div class="card border-0 shadow-sm" style="max-width: 650px">
+        <div class="card-body p-4">
+            <form asp-area="Admin" asp-controller="Properties" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="alert alert-danger"></div>
+                <div class="mb-3">
+                    <label for="Name" class="form-label">Название</label>
+                    <input id="Name" name="Name" class="form-control" maxlength="200" required value="@Model?.Name" placeholder="Например, можно ли прийти с детьми" />
+                </div>
+                <div class="mb-4">
+                    <label for="DataType" class="form-label">Тип значения</label>
+                    <select id="DataType" name="DataType" class="form-select">
+                        @foreach (ServiceEvents.Domain.Enums.PropertyDataType dataType in Enum.GetValues(typeof(ServiceEvents.Domain.Enums.PropertyDataType)))
+                        {
+                            <option value="@dataType">@dataType.ToRussian()</option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Добавить</button>
+                <a asp-area="Admin" asp-controller="Properties" asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+            </form>
+        </div>
+    </div>
+</section>

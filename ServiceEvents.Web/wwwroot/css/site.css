@@ -847,6 +847,15 @@ a:focus-visible {
   transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
+.employee-event-image {
+  width: calc(100% + 46px);
+  height: 165px;
+  margin: -23px -23px 19px;
+  border-radius: 10px 10px 0 0;
+  background: #edf5fb;
+  object-fit: cover;
+}
+
 .employee-event-card:hover {
   transform: translateY(-3px);
   border-color: #c8e4f6;
@@ -948,6 +957,15 @@ a:focus-visible {
   box-shadow: 0 15px 40px rgba(23, 48, 71, 0.055);
 }
 
+.employee-event-detail-image {
+  width: calc(100% + clamp(48px, 10vw, 108px));
+  max-height: 390px;
+  margin: calc(-1 * clamp(24px, 5vw, 54px)) calc(-1 * clamp(24px, 5vw, 54px)) 28px;
+  border-radius: 12px 12px 0 0;
+  background: #edf5fb;
+  object-fit: cover;
+}
+
 .employee-event-detail h1 {
   margin: 17px 0;
   color: var(--service-ink);
@@ -972,6 +990,33 @@ a:focus-visible {
   font-size: 1rem;
   line-height: 1.85;
   white-space: pre-line;
+}
+
+.employee-event-properties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0 0 14px;
+}
+
+.employee-event-properties > span {
+  padding: 0.38rem 0.58rem;
+  border: 1px solid #e2edf5;
+  border-radius: 6px;
+  background: #f6fafe;
+  color: #4e6276;
+  font-size: 0.74rem;
+}
+
+.employee-event-properties-detail {
+  align-items: flex-start;
+  flex-direction: column;
+  margin-top: 25px;
+}
+
+.employee-event-properties-detail h2 {
+  margin-bottom: 0.25rem;
+  color: var(--service-ink);
 }
 
 @media (max-width: 991.98px) {

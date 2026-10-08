@@ -1,7 +1,13 @@
 @model ServiceEvents.Application.DTOs.EventDTO.UpdateEventRequest
+@using ServiceEvents.Application.DTOs.EventPropertyDTO
+@using ServiceEvents.Domain.Enums
 
 @{
     ViewData["Title"] = "Редактировать мероприятие";
+    var availableProperties = ViewData["AvailableProperties"] as IReadOnlyCollection<EventPropertyResponse>
+        ?? Array.Empty<EventPropertyResponse>();
+    var propertyValues = ViewData["PropertyValues"] as Dictionary<Guid, string>
+        ?? new Dictionary<Guid, string>();
 }
 
 <div class="container mt-4">
@@ -54,6 +60,32 @@
                     <label asp-for="ImagePath" class="form-label">Путь к изображению</label>
                     <input asp-for="ImagePath" class="form-control" />
                 </div>
+                @if (availableProperties.Count > 0)
+                {
+                    <fieldset class="mb-4">
+                        <legend class="h5">Характеристики</legend>
+                        @foreach (var property in availableProperties)
+                        {
+                            propertyValues.TryGetValue(property.PropertyId, out var propertyValue);
+                            <div class="mb-3">
+                                <label class="form-label" for="property-@property.PropertyId">@property.Name</label>
+                                @if (property.DataType == PropertyDataType.Boolean)
+                                {
+                                    <select class="form-select" id="property-@property.PropertyId" name="propertyValues[@property.PropertyId]">
+                                        <option value="">Не выбрано</option>
+                                        <option value="Да" selected="@(propertyValue == "Да")">Да</option>
+                                        <option value="Нет" selected="@(propertyValue == "Нет")">Нет</option>
+                                    </select>
+                                }
+                                else
+                                {
+                                    <input class="form-control" id="property-@property.PropertyId" name="propertyValues[@property.PropertyId]"
+                                           value="@propertyValue" type="@(property.DataType == PropertyDataType.Integer ? "number" : "text")" />
+                                }
+                            </div>
+                        }
+                    </fieldset>
+                }
 
                 <button type="submit" class="btn btn-primary">Сохранить</button>
                 <a asp-area="Organizer" asp-controller="Events" asp-action="Details" asp-route-id="@Model.EventId" class="btn btn-outline-secondary">Отмена</a>
