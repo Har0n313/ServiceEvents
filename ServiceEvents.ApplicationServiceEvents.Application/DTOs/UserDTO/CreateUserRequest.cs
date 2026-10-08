@@ -3,8 +3,9 @@
 namespace ServiceEvents.Application.DTOs.UserDTO
 {
     public sealed record CreateUserRequest(
-    string FullName,
-    string Department,
-    string Position,
-    UserRole Role);
+        string Email,
+        string FullName,
+        string Department,
+        string Position,
+        UserRole Role);
 }

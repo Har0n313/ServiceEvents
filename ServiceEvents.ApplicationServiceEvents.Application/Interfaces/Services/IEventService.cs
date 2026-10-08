@@ -7,6 +7,10 @@ public interface IEventService
     Task<IReadOnlyCollection<EventResponse>> GetAllAsync(
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyCollection<EventResponse>> GetByOrganizerIdAsync(
+        Guid organizerId,
+        CancellationToken cancellationToken = default);
+
     Task<EventResponse?> GetByIdAsync(
         Guid id,
         CancellationToken cancellationToken = default);

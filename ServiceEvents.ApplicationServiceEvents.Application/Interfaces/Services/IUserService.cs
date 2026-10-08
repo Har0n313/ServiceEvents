@@ -16,6 +16,11 @@ public interface IUserService
         UserRole role,
         CancellationToken cancellationToken = default);
 
+    Task<UserResponse> CreateAsync(
+        CreateUserRequest request,
+        string passwordHash,
+        CancellationToken cancellationToken = default);
+
     Task UpdateAsync(
         Guid id,
         UpdateUserRequest request,

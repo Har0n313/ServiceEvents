@@ -1,0 +1,69 @@
+@model IReadOnlyCollection<ServiceEvents.Application.DTOs.EventDTO.EventResponse>
+
+@{
+    ViewData["Title"] = "Мои мероприятия";
+}
+
+<div class="container mt-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="mb-1">Мои мероприятия</h1>
+            <p class="text-muted mb-0">Создавайте мероприятия и следите за их статусом.</p>
+        </div>
+        <a asp-area="Organizer" asp-controller="Events" asp-action="Create" class="btn btn-primary">
+            Создать мероприятие
+        </a>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <div class="card border-0 shadow-sm">
+            <div class="card-body py-5 text-center">
+                <h2 class="h5">Пока нет мероприятий</h2>
+                <p class="text-muted">Создайте первое мероприятие, чтобы оно появилось в этом списке.</p>
+                <a asp-area="Organizer" asp-controller="Events" asp-action="Create" class="btn btn-primary">
+                    Создать мероприятие
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Дата начала</th>
+                        <th>Место</th>
+                        <th>Статус</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var eventItem in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@eventItem.Title</td>
+                            <td>@DateTime.SpecifyKind(eventItem.StartDate, DateTimeKind.Utc).ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>@(string.IsNullOrWhiteSpace(eventItem.Location) ? "—" : eventItem.Location)</td>
+                            <td>@eventItem.Status</td>
+                            <td class="text-end">
+                                <a asp-area="Organizer" asp-controller="Events" asp-action="Details" asp-route-id="@eventItem.EventId" class="btn btn-sm btn-outline-secondary">Управлять</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -30,6 +30,19 @@ public class EventService : IEventService
             .ToList();
     }
 
+    public async Task<IReadOnlyCollection<EventResponse>> GetByOrganizerIdAsync(
+        Guid organizerId,
+        CancellationToken cancellationToken = default)
+    {
+        var events = await _eventRepository.GetByOrganizerIdAsync(
+            organizerId,
+            cancellationToken);
+
+        return events
+            .Select(eventEntity => eventEntity.ToResponse())
+            .ToList();
+    }
+
     public async Task<EventResponse?> GetByIdAsync(
         Guid id,
         CancellationToken cancellationToken = default)
